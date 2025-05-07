@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +23,11 @@ import { FeatureCard } from "@/components/feature-card";
 import { TestimonialCard } from "@/components/testimonial-card";
 import { GradientButton } from "@/components/gradient-button";
 import { ScrollButton } from "@/components/scroll-button";
-import { SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section */}
@@ -61,30 +65,14 @@ export default function LandingPage() {
 
               {/* Button group */}
               <div className="flex flex-col sm:flex-row gap-6 pt-4">
-                <SignedIn>
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity duration-200"
-                    asChild
-                  >
-                    <Link href="/dashboard">
-                      Go to Dashboard
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                </SignedIn>
-                
-                <SignedOut>
-                  <SignUpButton mode="modal">
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity duration-200"
-                    >
-                      Try Twinly Now
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </SignUpButton>
-                </SignedOut>
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity duration-200"
+                  onClick={() => router.push('/dashboard')}
+                >
+                  Try Twinly Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
 
                 <Button
                   variant="outline"
@@ -599,7 +587,7 @@ export default function LandingPage() {
         <div className="w-full px-4 max-w-screen-2xl mx-auto relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <blockquote className="text-3xl md:text-4xl font-bold text-white leading-relaxed">
-              "We're building more than an assistant — we're building your digital memory." 
+              &quot;We&apos;re building more than an assistant — we&apos;re building your digital memory.&quot;
             </blockquote>
           </div>
         </div>
