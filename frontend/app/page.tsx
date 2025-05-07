@@ -7,6 +7,15 @@ import {
   CheckCircle,
   MessageSquare,
   Sparkles,
+  Lock,
+  Mail,
+  Clock,
+  ListTodo,
+  Users,
+  Zap,
+  Shield,
+  Database,
+  Wrench
 } from "lucide-react";
 import { FeatureCard } from "@/components/feature-card";
 import { TestimonialCard } from "@/components/testimonial-card";
@@ -17,7 +26,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section */}
-      <section id="hero" className="relative bg-black min-h-screen flex items-center">
+      <section id="hero" className="relative bg-black h-screen flex items-center">
         {/* Enhanced background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -76,7 +85,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="min-h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+      <section id="features" className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
         {/* Interactive background pattern */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-5" />
         
@@ -155,11 +164,10 @@ export default function LandingPage() {
             />
           </div>
         </div>
-        <ScrollButton targetId="product" variant="light" />
       </section>
 
       {/* Product Showcase Section */}
-      <section id="product" className="min-h-screen flex items-center relative bg-black">
+      <section id="product" className="h-screen flex items-center relative bg-black">
         {/* Enhanced background gradient - same as hero section */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -248,11 +256,10 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <ScrollButton targetId="testimonials" variant="dark" />
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="min-h-screen flex items-center relative bg-gradient-to-br from-purple-50 via-white to-blue-50 overflow-hidden">
+      <section id="testimonials" className="h-screen flex items-center relative bg-gradient-to-br from-purple-50 via-white to-blue-50 overflow-hidden">
         {/* Dynamic background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[url('/dots.svg')] bg-repeat opacity-5" />
@@ -312,11 +319,278 @@ export default function LandingPage() {
             />
           </div>
         </div>
-        <ScrollButton targetId="cta" variant="light" />
+      </section>
+
+      {/* What is Twinly Section */}
+      <section id="what-is-twinly" className="h-screen flex items-center relative bg-black">
+        {/* Enhanced background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
+
+        {/* Animated floating shapes */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-700" />
+        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        
+        <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium text-white mb-6">
+              <Brain className="h-5 w-5 mr-2 text-purple-400" />
+              <span>What is Twinly?</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">
+              Your AI Cognitive Twin
+            </h2>
+            
+            <p className="text-xl text-white/80 max-w-3xl mx-auto mb-12 leading-relaxed">
+              Twinly is an AI-powered cognitive twin that learns from your digital footprint,
+              connects to your favorite tools, and helps you work smarter by remembering
+              everything important and taking actions on your behalf.
+            </p>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+              {[
+                {
+                  icon: <Wrench className="h-6 w-6" />,
+                  title: "Connects to Your Tools",
+                  desc: "Seamlessly integrates with Gmail, Slack, Notion, and more"
+                },
+                {
+                  icon: <Database className="h-6 w-6" />,
+                  title: "Remembers Everything",
+                  desc: "Creates a searchable memory of your digital interactions"
+                },
+                {
+                  icon: <ListTodo className="h-6 w-6" />,
+                  title: "Prioritizes Tasks",
+                  desc: "Helps organize and summarize your daily activities"
+                },
+                {
+                  icon: <Zap className="h-6 w-6" />,
+                  title: "Takes Action",
+                  desc: "Handles emails, notes, and tasks autonomously"
+                }
+              ].map((item, index) => (
+                <div key={index} className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                  <div className="text-purple-400 mb-4">{item.icon}</div>
+                  <h3 className="text-lg font-semibold mb-2 text-white">{item.title}</h3>
+                  <p className="text-white/70">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <Button size="lg" className="mt-12 bg-white text-violet-600 hover:bg-white/90 transition-all duration-200">
+              See Twinly in Action
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section - Light Theme */}
+      <section id="how-it-works" className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+        {/* Interactive background pattern */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-5" />
+        
+        {/* Colorful orbs */}
+        <div className="absolute -left-20 top-20 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-blob" />
+        <div className="absolute -right-20 top-40 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-20 left-40 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+
+        <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-200/30 backdrop-blur-sm text-sm font-medium text-blue-700 mb-6">
+              <Clock className="h-5 w-5 mr-2 text-blue-500" />
+              <span>How It Works</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600">
+              Three Simple Steps to Get Started
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {[
+                {
+                  step: "01",
+                  title: "Connect Your Tools",
+                  desc: "Securely connect your Gmail, Slack, Notion, and other apps",
+                  icon: <Wrench className="h-12 w-12" />
+                },
+                {
+                  step: "02",
+                  title: "Chat with Twinly",
+                  desc: "Interact naturally through our intuitive chat interface",
+                  icon: <MessageSquare className="h-12 w-12" />
+                },
+                {
+                  step: "03",
+                  title: "Let It Act",
+                  desc: "Watch as Twinly handles tasks and communications for you",
+                  icon: <Zap className="h-12 w-12" />
+                }
+              ].map((item, index) => (
+                <div key={index} className="p-8 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-purple-600 mb-6">{item.icon}</div>
+                  <div className="text-purple-600 text-sm font-medium mb-4">Step {item.step}</div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800">{item.title}</h3>
+                  <p className="text-gray-600">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+    
+      {/* Use Cases Section */}
+      <section id="use-cases" className="h-screen flex items-center relative bg-black">
+        {/* Enhanced background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
+
+        {/* Animated floating shapes */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-700" />
+        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        
+        <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium text-white mb-6">
+              <Users className="h-5 w-5 mr-2 text-purple-400" />
+              <span>Use Cases</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-12 text-white">
+              What Can Twinly Do For You?
+            </h2>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {[
+                {
+                  icon: <Mail />,
+                  title: "Email Management",
+                  desc: "Summarize unread emails and draft contextual responses"
+                },
+                {
+                  icon: <MessageSquare />,
+                  title: "Meeting Memory",
+                  desc: "Recall and summarize past meeting discussions"
+                },
+                {
+                  icon: <Calendar />,
+                  title: "Smart Planning",
+                  desc: "Plan your week based on pending tasks and priorities"
+                },
+                {
+                  icon: <ListTodo />,
+                  title: "Task Automation",
+                  desc: "Convert Slack threads into Notion checklists"
+                },
+                {
+                  icon: <Clock />,
+                  title: "Schedule Management",
+                  desc: "Find optimal meeting slots and send invites"
+                },
+                {
+                  icon: <Brain />,
+                  title: "Knowledge Base",
+                  desc: "Build your personal searchable knowledge base"
+                }
+              ].map((item, index) => (
+                <div key={index} className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                  <div className="text-purple-400 mb-4">{item.icon}</div>
+                  <h3 className="text-xl font-semibold mb-4 text-white">{item.title}</h3>
+                  <p className="text-white/70">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+     th
+
+      {/* Privacy & Trust Section - Light Theme */}
+      <section id="privacy" className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+        {/* Interactive background pattern */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-5" />
+        
+        {/* Colorful orbs */}
+        <div className="absolute -left-20 top-20 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-blob" />
+        <div className="absolute -right-20 top-40 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-20 left-40 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+
+        {/* Floating elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-blue-400 rounded-full animate-float" />
+          <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-purple-400 rounded-full animate-float animation-delay-2000" />
+          <div className="absolute bottom-1/4 right-1/4 w-5 h-5 bg-pink-400 rounded-full animate-float animation-delay-4000" />
+        </div>
+
+        {/* Geometric shapes */}
+        <div className="absolute top-20 right-20 w-32 h-32 border-4 border-blue-200 rounded-xl rotate-12 animate-spin-slow" />
+        <div className="absolute bottom-20 left-20 w-24 h-24 border-4 border-purple-200 rotate-45 animate-spin-slow animation-delay-2000" />
+
+        <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-200/30 backdrop-blur-sm text-sm font-medium text-blue-700 mb-6">
+              <Shield className="h-5 w-5 mr-2 text-blue-500" />
+              <span>Privacy & Trust</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600">
+              Your Data, Your Control
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {[
+                {
+                  icon: <Lock />,
+                  title: "End-to-End Encryption",
+                  desc: "Your data is encrypted at rest and in transit"
+                },
+                {
+                  icon: <Shield />,
+                  title: "No Training Data",
+                  desc: "Your data is never used to train our models"
+                },
+                {
+                  icon: <Database />,
+                  title: "Local-First Coming Soon",
+                  desc: "Option to run Twinly entirely on your device"
+                }
+              ].map((item, index) => (
+                <div key={index} className="p-8 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-purple-600 mb-6">{item.icon}</div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800">{item.title}</h3>
+                  <p className="text-gray-600">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision Section - Dark Theme */}
+      <section id="vision" className="relative bg-black py-24">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10" />
+        
+        <div className="w-full px-4 max-w-screen-2xl mx-auto relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <blockquote className="text-3xl md:text-4xl font-bold text-white leading-relaxed">
+              "We're building more than an assistant — we're building your digital memory."
+            </blockquote>
+          </div>
+        </div>
       </section>
 
       {/* CTA Section */}
-      <section id="cta" className="min-h-screen flex items-center relative bg-black">
+      <section id="cta" className="h-screen flex items-center relative bg-black">
         {/* Enhanced background gradient - same as hero section */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -359,7 +633,6 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <ScrollButton targetId="footer" variant="dark" />
       </section>
 
       {/* Footer */}
