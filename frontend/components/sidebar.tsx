@@ -22,9 +22,9 @@ const chatHistory = [
 ]
 
 const navigationItems = [
-  { name: "Home", href: "/", icon: Home },
-  { name: "Chat", href: "/chat", icon: MessageSquare },
-  { name: "Tasks", href: "/tasks", icon: CheckSquare },
+  { name: "Home", href: "/dashboard", icon: Home },
+  { name: "Previous Chats", href: "/chat", icon: MessageSquare },
+  { name: "New Tasks", href: "/tasks", icon: CheckSquare },
   { name: "Memory", href: "/memory", icon: Brain },
   { name: "Integrations", href: "/integrations", icon: Link },
   { name: "Settings", href: "/settings", icon: Settings },
