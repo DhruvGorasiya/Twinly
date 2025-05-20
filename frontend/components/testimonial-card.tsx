@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface TestimonialCardProps {
   quote: string
   author: string
@@ -14,10 +16,10 @@ export function TestimonialCard({ quote, author, role, avatarUrl, gradient }: Te
       />
 
       <div className="relative z-10">
-        <div className="mb-6 text-lg italic">"{quote}"</div>
+        <div className="mb-6 text-lg italic">&quot;{quote}&quot;</div>
 
         <div className="flex items-center">
-          <img src={avatarUrl || "/placeholder.svg"} alt={author} className="h-12 w-12 rounded-full object-cover" />
+          <Image src={avatarUrl || "/placeholder.svg"} alt={author} className="h-12 w-12 rounded-full object-cover" width={48} height={48} />
           <div className="ml-3">
             <div className="font-semibold">{author}</div>
             <div className="text-sm text-gray-600">{role}</div>

@@ -31,12 +31,8 @@ const navigationItems = [
 ]
 
 export function Sidebar() {
-  const { state, setOpen } = useSidebar();
+  const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-
-  const toggleSidebar = () => {
-    setOpen(!isCollapsed);
-  };
 
   return (
     <ShadcnSidebar className="border-r border-white/5 bg-gradient-to-b from-zinc-900 via-[#0f0f12] to-zinc-900 flex flex-col">
