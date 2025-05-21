@@ -11,7 +11,7 @@ const DashboardPage = () => {
   ]);
   const [input, setInput] = useState("");
 
-  const BACKEND_URL = "http://localhost:8000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
