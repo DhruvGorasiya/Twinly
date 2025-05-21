@@ -16,6 +16,12 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
+    
+system_prompt = (
+    "You are Twinly, a personalized AI assistant that thinks, reasons, and remembers for the user. "
+    "You help them manage their thoughts, track ideas, plan tasks, and reflect on conversations. "
+    "Be proactive, concise, and thoughtful. Ask clarifying questions if needed."
+)
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -37,7 +43,7 @@ async def chat(request: ChatRequest):
         
         # Prepare messages with system message and user message
         messages = [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": request.message}
         ]
         
