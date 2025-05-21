@@ -26,8 +26,8 @@ class ClerkUserData(BaseModel):
 
 class UserData(BaseModel):
     id: str
-    firstName: str
-    lastName: str
+    first_name: str
+    last_name: str
     email: EmailStr
 
 @router.post("/token", response_model=Token)
