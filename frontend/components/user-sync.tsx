@@ -10,8 +10,8 @@ interface UserData {
   email: string;
 }
 
-// Update the base URL to include the correct path prefix
-const BACKEND_URL = "http://localhost:8000/api/v1/auth";
+// Update the base URL to use environment variable
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
 export function UserSync() {
   const { user, isLoaded } = useUser();
@@ -41,7 +41,9 @@ export function UserSync() {
         try {
           // Determine if this is a new registration or login
           const isNewUser = user.createdAt === user.updatedAt;
-          const endpoint = isNewUser ? `${BACKEND_URL}/register` : `${BACKEND_URL}/login`;
+          const endpoint = isNewUser
+            ? `${BACKEND_URL}/api/v1/auth/register`
+            : `${BACKEND_URL}/api/v1/auth/login`;
 
           // Debug logs
           console.log('Is new user:', isNewUser);

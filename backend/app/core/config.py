@@ -9,7 +9,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     
     # CORS Configuration
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:3000"]  # Frontend URL
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
+        "http://localhost:3000",  # Local development
+        "https://twinly.net",     # Production frontend
+        "http://twinly.net"       # Fallback for http
+    ]
     
     # Database Configuration
     POSTGRES_SERVER: str = "localhost"
@@ -25,6 +29,12 @@ class Settings(BaseSettings):
     
     # OpenAI Configuration
     OPENAI_API_KEY: str
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Override CORS origins if environment variable is set
+        if os.getenv("CORS_ORIGINS"):
+            self.BACKEND_CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS").split(",")]
     
     class Config:
         case_sensitive = True

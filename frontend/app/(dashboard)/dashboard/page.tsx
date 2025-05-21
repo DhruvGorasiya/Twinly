@@ -11,7 +11,7 @@ const DashboardPage = () => {
   ]);
   const [input, setInput] = useState("");
 
-  const BACKEND_URL = "http://localhost:8000/api/v1";
+  const BACKEND_URL = "http://localhost:8000";
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +23,10 @@ const DashboardPage = () => {
 
     try {
       // Make API call to backend
-      const response = await fetch(`${BACKEND_URL}/chat`, {
-        method: 'POST',
+      const response = await fetch(`${BACKEND_URL}/api/v1/chat`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: input,
