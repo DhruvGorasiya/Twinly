@@ -1,6 +1,6 @@
-# Credentials and tokens
-credentials.json
-token.pickle
+# Git
+.git
+.gitignore
 
 # Python
 __pycache__/
@@ -28,10 +28,22 @@ wheels/
 # Virtual Environment
 venv/
 ENV/
-.env
 
 # IDE
 .idea/
 .vscode/
 *.swp
-*.swo 
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+token.pickle
+*.log 

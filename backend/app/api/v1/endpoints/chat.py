@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
 from openai import OpenAI
 from app.core.config import settings
 import logging
@@ -16,7 +15,8 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
-    
+
+# Custom Twinly system prompt
 system_prompt = (
     "You are Twinly, a personalized AI assistant that thinks, reasons, and remembers for the user. "
     "You help them manage their thoughts, track ideas, plan tasks, and reflect on conversations. "
@@ -25,45 +25,33 @@ system_prompt = (
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    logger.info(f"Received request: {request}")
+    
+    if not settings.OPENAI_API_KEY:
+        logger.error("OpenAI API key not configured")
+        raise HTTPException(
+            status_code=500,
+            detail="OpenAI API key is not configured. Please set the OPENAI_API_KEY environment variable."
+        )
+    
     try:
-        # Debug logging
-        logger.info(f"Received request: {request}")
-        logger.info(f"API Key present: {bool(settings.OPENAI_API_KEY)}")
-        
-        # Check if API key is configured
-        if not settings.OPENAI_API_KEY:
-            logger.error("OpenAI API key not configured")
-            raise HTTPException(
-                status_code=500,
-                detail="OpenAI API key is not configured. Please set the OPENAI_API_KEY environment variable."
-            )
-        
-        # Initialize OpenAI client
+        # Initialize OpenAI client (new SDK style)
         client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        
-        # Prepare messages with system message and user message
+
+        # Build message context
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": request.message}
         ]
         
-        logger.info(f"Prepared messages: {messages}")
+        # Call OpenAI Chat Completion API (sync call in SDK v1.x)
+        response = client.chat.completions.create(
+            model="gpt-4o",  # Use "gpt-4o" or "gpt-3.5-turbo" as per availability
+            messages=messages,
+            temperature=0.7
+        )
         
-        # Create chat completion
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                temperature=0.7
-            )
-            logger.info(f"OpenAI Response: {response}")
-        except Exception as e:
-            logger.error(f"OpenAI API call failed: {str(e)}")
-            raise
-        
-        # Extract the assistant's response
         assistant_message = response.choices[0].message.content
-        
         return ChatResponse(response=assistant_message)
 
     except Exception as e:

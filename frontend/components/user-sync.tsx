@@ -18,8 +18,6 @@ export function UserSync() {
   const { isSignedIn } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
 
-  console.log("this is the userData", userData);
-
   useEffect(() => {
     if (isLoaded && user) {
       // Get the primary email address
@@ -35,6 +33,8 @@ export function UserSync() {
 
       // Update state with user data
       setUserData(newUserData);
+
+      console.log("this is the userData", userData);
 
       // Send data to backend
       const sendUserData = async () => {
