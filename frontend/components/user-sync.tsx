@@ -11,7 +11,8 @@ interface UserData {
 }
 
 // Update the base URL to use environment variable
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const BACKEND_URL = "http://localhost:8000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
 export function UserSync() {
   const { user, isLoaded } = useUser();

@@ -20,12 +20,25 @@ app = FastAPI(
 # Set up CORS middleware with more specific configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,  # Using the origins from settings
+        allow_origins=[
+        "http://localhost:3000",     # Local development
+        "https://twinly.net",        # Production frontend
+        "http://twinly.net"          # Fallback for http
+    ],  # Using the origins from settings
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"]
 )
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["http://localhost:3000"],  # Explicitly allow localhost
+#     allow_credentials=True,
+#     allow_methods=["*"],  # Allow all methods
+#     allow_headers=["*"],  # Allow all headers
+#     expose_headers=["*"]
+# )
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)

@@ -11,7 +11,8 @@ const DashboardPage = () => {
   ]);
   const [input, setInput] = useState("");
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  // const BACKEND_URL = "https://twinly-backend-357648867200.us-east4.run.app";
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
