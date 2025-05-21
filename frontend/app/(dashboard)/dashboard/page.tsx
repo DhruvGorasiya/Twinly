@@ -27,6 +27,7 @@ const DashboardPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "https://twinly.net",
         },
         body: JSON.stringify({
           message: input,

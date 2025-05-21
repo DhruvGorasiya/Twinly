@@ -51,10 +51,11 @@ export function UserSync() {
           console.log('Request payload:', newUserData);
 
           const response = await fetch(endpoint, {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Origin: "https://twinly.net",
             },
             body: JSON.stringify(newUserData),
           });
