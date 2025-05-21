@@ -7,6 +7,7 @@ import {
 import { Geist, Geist_Mono } from "next/font/google";
 import { Sidebar } from "@/components/sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { UserSync } from "@/components/user-sync";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}>
+      <UserSync />
       <SidebarProvider defaultOpen={true}>
         <header className="absolute top-0 right-0 z-50 flex justify-end items-center p-4 gap-4 w-full">
           <div className="absolute left-4">

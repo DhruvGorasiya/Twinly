@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.security import create_access_token, get_password_hash, verify_password
 from app.db.session import get_db
 from app.models.user import User
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -18,26 +18,17 @@ class UserCreate(BaseModel):
     password: str
     full_name: str
 
-@router.post("/register", response_model=Token)
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
-    
-    hashed_password = get_password_hash(user.password)
-    db_user = User(
-        email=user.email,
-        hashed_password=hashed_password,
-        full_name=user.full_name
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    access_token = create_access_token(data={"sub": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+class ClerkUserData(BaseModel):
+    id: str
+    firstName: str
+    lastName: str
+    email: str
+
+class UserData(BaseModel):
+    id: str
+    firstName: str
+    lastName: str
+    email: EmailStr
 
 @router.post("/token", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -50,7 +41,24 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         )
     
     access_token = create_access_token(data={"sub": user.email})
-    return {"access_token": access_token, "token_type": "bearer"} 
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# New endpoints for Clerk.js integration
+@router.post("/register")
+async def register(user_data: UserData):
+    """
+    Register a new user with Clerk.js data
+    """
+    print("Registered User from Clerk:", user_data.dict())
+    return {"message": "User registered successfully", "user": user_data}
+
+@router.post("/login")
+async def login(user_data: UserData):
+    """
+    Login user with Clerk.js data
+    """
+    print("Logged in User from Clerk:", user_data.dict())
+    return {"message": "User logged in successfully", "user": user_data}
 
 
 

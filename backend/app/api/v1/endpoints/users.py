@@ -16,9 +16,9 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
-@router.get("/me", response_model=UserResponse)
-def read_user_me(current_user: User = Depends(get_current_user)):
-    return current_user
+# @router.get("/me", response_model=UserResponse)
+# def read_user_me(current_user: User = Depends(get_current_user)):
+#     return current_user
 
 @router.get("/{user_id}", response_model=UserResponse)
 def read_user(user_id: int, db: Session = Depends(get_db)):

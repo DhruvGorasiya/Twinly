@@ -1,6 +1,7 @@
 from typing import List
 from pydantic_settings import BaseSettings
 from pydantic import AnyHttpUrl
+import os
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FastAPI Backend"
@@ -21,6 +22,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here"  # Change this in production
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # OpenAI Configuration
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
     
     class Config:
         case_sensitive = True

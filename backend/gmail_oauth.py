@@ -31,7 +31,7 @@ class GmailAPI:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', 
                     self.SCOPES,
-                    redirect_uri='http://localhost:8080/'  # Explicitly set redirect URI
+                    redirect_uri='http://localhost:8080/'
                 )
                 creds = flow.run_local_server(
                     port=8080,
@@ -46,6 +46,18 @@ class GmailAPI:
         # Build the Gmail service
         self.service = build('gmail', 'v1', credentials=creds)
         return self.service
+
+    def get_starred_emails(self, max_results=10):
+        """Get a list of starred emails."""
+        if not self.service:
+            self.authenticate()
+        
+        results = self.service.users().messages().list(
+            userId='me',
+            labelIds=['STARRED'],
+            maxResults=max_results
+        ).execute()
+        return results.get('messages', [])
 
     def get_email_list(self, max_results=10, label='INBOX'):
         """
@@ -194,146 +206,101 @@ def main():
     # Initialize the Gmail API client
     gmail_client = GmailAPI()
     
+    print("\nAuthenticating with Gmail...")
+    print("=" * 50)
+    
     # Authenticate and get service
     service = gmail_client.authenticate()
     
-    def print_search_menu():
-        print("\nEmail Search Options:")
-        print("1. Search by sender")
-        print("2. Search by subject")
-        print("3. Search by date range")
-        print("4. Search by content")
-        print("5. Advanced search")
-        print("6. Exit")
+    print("\nFetching starred messages...")
+    print("=" * 50)
     
-    while True:
-        print_search_menu()
-        choice = input("\nEnter your choice (1-6): ")
+    # Get starred emails
+    emails = gmail_client.get_starred_emails(max_results=10)
+    
+    if not emails:
+        print("No starred messages found.")
+        return
+    
+    print(f"\nFound {len(emails)} starred messages:")
+    print("=" * 50)
+    
+    for email_meta in emails:
+        email_data = gmail_client.get_email_content(email_meta['id'])
         
-        if choice == '6':
-            break
+        # Print email details
+        print("\n📧 Email Details:")
+        print(f"Date: {email_data['metadata']['date']}")
+        print(f"From: {email_data.get('headers', {}).get('From', 'N/A')}")
+        print(f"Subject: {email_data.get('headers', {}).get('Subject', 'N/A')}")
         
-        if choice == '1':
-            sender = input("Enter sender's email: ")
-            query = f"from:{sender}"
-        elif choice == '2':
-            subject = input("Enter subject to search: ")
-            query = f"subject:{subject}"
-        elif choice == '3':
-            start_date = input("Enter start date (YYYY/MM/DD): ")
-            end_date = input("Enter end date (YYYY/MM/DD): ")
-            query = f"after:{start_date} before:{end_date}"
-        elif choice == '4':
-            content = input("Enter content to search for: ")
-            query = f"{content}"
-        elif choice == '5':
-            print("\nAdvanced Search Options Examples:")
-            print("- from:someone@example.com")
-            print("- subject:meeting")
-            print("- has:attachment")
-            print("- is:starred")
-            print("- newer_than:2d")
-            print("- older_than:1w")
-            print("- in:anywhere")
-            print("You can combine these using AND/OR, e.g.:")
-            print("from:someone@example.com AND has:attachment")
-            query = input("\nEnter your search query: ")
+        # Print snippet of content
+        if email_data['body']['plain']:
+            content = email_data['body']['plain'][:200]
+        elif email_data['body']['html']:
+            h = html2text.HTML2Text()
+            h.ignore_links = True
+            content = h.handle(email_data['body']['html'])[:200]
         else:
-            print("Invalid choice!")
-            continue
+            content = "No content available"
         
-        max_results = int(input("How many results to show? (default 10): ") or 10)
-        
-        print(f"\nSearching for: {query}")
-        print("=" * 50)
-        
-        # Perform the search
-        emails = gmail_client.search_emails(query, max_results)
-        
-        if not emails:
-            print("No emails found matching your search criteria.")
-            continue
-        
-        print(f"\nFound {len(emails)} matching emails:")
-        print("=" * 50)
-        
-        for email_meta in emails:
-            email_data = gmail_client.get_email_content(email_meta['id'])
-            
-            # Print email details
-            print("\n📧 Email Details:")
-            print(f"Date: {email_data['metadata']['date']}")
-            print(f"From: {email_data.get('headers', {}).get('From', 'N/A')}")
-            print(f"Subject: {email_data.get('headers', {}).get('Subject', 'N/A')}")
-            
-            # Print snippet of content
-            if email_data['body']['plain']:
-                content = email_data['body']['plain'][:200]
-            elif email_data['body']['html']:
-                h = html2text.HTML2Text()
-                h.ignore_links = True
-                content = h.handle(email_data['body']['html'])[:200]
+        print("\nPreview:")
+        print(f"{content}...")
+        print("-" * 50)
+    
+    # Option to view full email
+    while True:
+        view_full = input("\nEnter email number to view full content (1 to {}) or 'q' to quit: ".format(len(emails)))
+        if view_full.lower() == 'q':
+            break
+        try:
+            idx = int(view_full) - 1
+            if 0 <= idx < len(emails):
+                email_data = gmail_client.get_email_content(emails[idx]['id'])
+                
+                print("\n" + "="*80)
+                print("FULL EMAIL CONTENT")
+                print("="*80)
+                
+                print("\n📧 BASIC INFORMATION:")
+                print(f"Message ID: {email_data['id']}")
+                print(f"Thread ID: {email_data['thread_id']}")
+                print(f"Size: {format_email_size(email_data['metadata']['size'])}")
+                print(f"Date: {email_data['metadata']['date']}")
+                
+                print("\n🏷️ LABELS:")
+                print(", ".join(email_data['labels']))
+                
+                print("\n📝 HEADERS:")
+                important_headers = ['From', 'To', 'Subject', 'Cc', 'Bcc']
+                for header in important_headers:
+                    if header in email_data['headers']:
+                        print(f"{header}: {email_data['headers'][header]}")
+                
+                print("\n📄 CONTENT:")
+                if email_data['body']['plain']:
+                    print("\nPlain Text Content:")
+                    print("-" * 40)
+                    print(email_data['body']['plain'])
+                elif email_data['body']['html']:
+                    h = html2text.HTML2Text()
+                    h.ignore_links = False
+                    plain_text = h.handle(email_data['body']['html'])
+                    print("\nConverted HTML Content:")
+                    print("-" * 40)
+                    print(plain_text)
+                
+                if email_data['attachments']:
+                    print("\n📎 ATTACHMENTS:")
+                    for idx, attachment in enumerate(email_data['attachments'], 1):
+                        print(f"\nAttachment {idx}:")
+                        print(f"Filename: {attachment['filename']}")
+                        print(f"Type: {attachment['mimeType']}")
+                        print(f"Size: {format_email_size(attachment['size'])}")
             else:
-                content = "No content available"
-            
-            print("\nPreview:")
-            print(f"{content}...")
-            print("-" * 50)
-        
-        # Option to view full email
-        while True:
-            view_full = input("\nEnter email number to view full content (1 to {}) or 'q' to quit: ".format(len(emails)))
-            if view_full.lower() == 'q':
-                break
-            try:
-                idx = int(view_full) - 1
-                if 0 <= idx < len(emails):
-                    email_data = gmail_client.get_email_content(emails[idx]['id'])
-                    
-                    print("\n" + "="*80)
-                    print("FULL EMAIL CONTENT")
-                    print("="*80)
-                    
-                    # Print full email details (reuse the formatting from previous version)
-                    print("\n📧 BASIC INFORMATION:")
-                    print(f"Message ID: {email_data['id']}")
-                    print(f"Thread ID: {email_data['thread_id']}")
-                    print(f"Size: {format_email_size(email_data['metadata']['size'])}")
-                    print(f"Date: {email_data['metadata']['date']}")
-                    
-                    print("\n🏷️ LABELS:")
-                    print(", ".join(email_data['labels']))
-                    
-                    print("\n📝 HEADERS:")
-                    important_headers = ['From', 'To', 'Subject', 'Cc', 'Bcc']
-                    for header in important_headers:
-                        if header in email_data['headers']:
-                            print(f"{header}: {email_data['headers'][header]}")
-                    
-                    print("\n📄 CONTENT:")
-                    if email_data['body']['plain']:
-                        print("\nPlain Text Content:")
-                        print("-" * 40)
-                        print(email_data['body']['plain'])
-                    elif email_data['body']['html']:
-                        h = html2text.HTML2Text()
-                        h.ignore_links = False
-                        plain_text = h.handle(email_data['body']['html'])
-                        print("\nConverted HTML Content:")
-                        print("-" * 40)
-                        print(plain_text)
-                    
-                    if email_data['attachments']:
-                        print("\n📎 ATTACHMENTS:")
-                        for idx, attachment in enumerate(email_data['attachments'], 1):
-                            print(f"\nAttachment {idx}:")
-                            print(f"Filename: {attachment['filename']}")
-                            print(f"Type: {attachment['mimeType']}")
-                            print(f"Size: {format_email_size(attachment['size'])}")
-                else:
-                    print("Invalid email number!")
-            except ValueError:
-                print("Invalid input!")
+                print("Invalid email number!")
+        except ValueError:
+            print("Invalid input!")
 
 if __name__ == '__main__':
     main() 

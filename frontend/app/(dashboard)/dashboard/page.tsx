@@ -11,18 +11,47 @@ const DashboardPage = () => {
   ]);
   const [input, setInput] = useState("");
 
+  const BACKEND_URL = "http://localhost:8000/api/v1";
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
+    
+    // Add user message to the chat
     setMessages([...messages, { role: "user", content: input }]);
     setInput("");
-    // Placeholder for AI response
-    setTimeout(() => {
+
+    try {
+      // Make API call to backend
+      const response = await fetch(`${BACKEND_URL}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: input,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from AI');
+      }
+
+      const data = await response.json();
+      
+      // Add AI response to the chat
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "(AI response will appear here)" },
+        { role: "assistant", content: data.response },
       ]);
-    }, 1000);
+    } catch (error) {
+      console.error('Error:', error);
+      // Add error message to the chat
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Sorry, I encountered an error. Please try again." },
+      ]);
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import "./globals.css";
+import { UserSync } from "@/components/user-sync";
 
 export const metadata: Metadata = {
   title: "Twinly - Your AI Twin",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body>
+          <UserSync />
           {children}
         </body>
       </html>
