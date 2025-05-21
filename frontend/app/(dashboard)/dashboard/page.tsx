@@ -24,6 +24,7 @@ const DashboardPage = () => {
 
     try {
       // Make API call to backend
+      console.log("this is the backend url", process.env.NEXT_PUBLIC_BACKEND_URL);
       const response = await fetch(`${BACKEND_URL}/api/v1/chat`, {
         method: "POST",
         headers: {
