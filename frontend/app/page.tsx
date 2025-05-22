@@ -20,10 +20,10 @@ import {
   Wrench
 } from "lucide-react";
 import { FeatureCard } from "@/components/feature-card";
-import { TestimonialCard } from "@/components/testimonial-card";
 import { GradientButton } from "@/components/gradient-button";
 import { ScrollButton } from "@/components/scroll-button";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -31,7 +31,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section */}
-      <section id="hero" className="relative bg-black h-screen flex items-center">
+      <section
+        id="hero"
+        className="relative bg-black h-screen flex items-center"
+      >
         {/* Enhanced background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -68,18 +71,10 @@ export default function LandingPage() {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity duration-200"
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push("/dashboard")}
                 >
                   Try Twinly Now
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-purple-500/50 bg-purple-500/10 text-white hover:bg-purple-500/20 transition-colors duration-200"
-                >
-                  Watch Demo
                 </Button>
               </div>
             </div>
@@ -87,12 +82,14 @@ export default function LandingPage() {
         </div>
         <ScrollButton targetId="features" variant="dark" />
       </section>
-
       {/* Features Section */}
-      <section id="features" className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+      <section
+        id="features"
+        className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden"
+      >
         {/* Interactive background pattern */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-5" />
-        
+
         {/* Colorful orbs */}
         <div className="absolute -left-20 top-20 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-blob" />
         <div className="absolute -right-20 top-40 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
@@ -108,7 +105,7 @@ export default function LandingPage() {
         {/* Geometric shapes */}
         <div className="absolute top-20 right-20 w-32 h-32 border-4 border-blue-200 rounded-xl rotate-12 animate-spin-slow" />
         <div className="absolute bottom-20 left-20 w-24 h-24 border-4 border-purple-200 rotate-45 animate-spin-slow animation-delay-2000" />
-        
+
         <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-200/30 backdrop-blur-sm text-sm font-medium text-blue-700 mb-6 transform hover:scale-105 transition-transform duration-300">
@@ -169,9 +166,11 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Product Showcase Section */}
-      <section id="product" className="h-screen flex items-center relative bg-black">
+      <section
+        id="product"
+        className="h-screen flex items-center relative bg-black"
+      >
         {/* Enhanced background gradient - same as hero section */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -192,30 +191,32 @@ export default function LandingPage() {
                   {
                     icon: "💬",
                     title: "Smart Chat",
-                    desc: "Natural conversations with context awareness"
+                    desc: "Natural conversations with context awareness",
                   },
                   {
                     icon: "🎯",
                     title: "Precision",
-                    desc: "Accurate responses tailored to your needs"
+                    desc: "Accurate responses tailored to your needs",
                   },
                   {
                     icon: "⚡",
                     title: "Speed",
-                    desc: "Lightning-fast responses when you need them"
+                    desc: "Lightning-fast responses when you need them",
                   },
                   {
                     icon: "🔄",
                     title: "Adaptable",
-                    desc: "Learns and evolves with your preferences"
-                  }
+                    desc: "Learns and evolves with your preferences",
+                  },
                 ].map((feature, index) => (
                   <div
                     key={index}
                     className="group p-6 rounded-xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 hover:transform hover:scale-105 cursor-pointer"
                   >
                     <div className="text-4xl mb-3">{feature.icon}</div>
-                    <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                      {feature.title}
+                    </h3>
                     <p className="text-white/70 text-sm">{feature.desc}</p>
                   </div>
                 ))}
@@ -250,7 +251,10 @@ export default function LandingPage() {
               </ul>
 
               <div className="pt-4">
-                <GradientButton asChild className="bg-gradient-to-r from-blue-500 to-purple-500">
+                <GradientButton
+                  asChild
+                  className="bg-gradient-to-r from-blue-500 to-purple-500"
+                >
                   <Link href="/dashboard" className="flex items-center">
                     Explore the Interface
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -261,72 +265,116 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="h-screen flex items-center relative bg-gradient-to-br from-purple-50 via-white to-blue-50 overflow-hidden">
+      {/* What Others Don't, We Do Section */}
+      <section
+        id="what-others-dont"
+        className="h-screen flex items-center relative bg-gradient-to-br from-purple-50 via-white to-blue-50 overflow-hidden"
+      >
         {/* Dynamic background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[url('/dots.svg')] bg-repeat opacity-5" />
           <div className="absolute inset-0 bg-gradient-to-br from-purple-100/20 via-transparent to-blue-100/20" />
         </div>
-
-        {/* Animated shapes */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-purple-300/20 to-pink-300/20 rounded-full blur-2xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gradient-to-br from-blue-300/20 to-cyan-300/20 rounded-full blur-2xl animate-pulse delay-1000" />
-        </div>
-
-        {/* Interactive elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 right-40 w-20 h-20 border-4 border-purple-200 rounded-full animate-spin-slow" />
-          <div className="absolute bottom-40 left-20 w-16 h-16 border-4 border-blue-200 rotate-45 animate-bounce-slow" />
-          <div className="absolute top-1/2 right-20 w-12 h-12 border-4 border-pink-200 rounded-full animate-ping-slow" />
-        </div>
-
-        <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-200/30 backdrop-blur-sm text-sm font-medium text-purple-700 mb-6 transform hover:scale-105 transition-transform duration-300">
+        <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10 flex items-center justify-center">
+          <motion.div
+            className="max-w-3xl mx-auto text-center"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            <motion.div
+              className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-200/30 backdrop-blur-sm text-sm font-medium text-purple-700 mb-6"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              viewport={{ once: true }}
+            >
               <Sparkles className="h-5 w-5 mr-2 text-purple-500 animate-pulse" />
-              <span>User Stories</span>
+              <span>What Others Don&apos;t, We Do</span>
+            </motion.div>
+            <motion.h2
+              className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 [background-size:200%_auto] animate-gradient py-2"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              Productivity, Reimagined
+            </motion.h2>
+            <motion.p
+              className="text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              Most tools focus on automation. Twinly goes further—building context, continuity, and a memory graph that truly understands you.
+            </motion.p>
+            <div className="grid md:grid-cols-2 gap-6 text-left">
+              {[
+                {
+                  icon: <Sparkles className="h-7 w-7 text-purple-500 animate-bounce" />,
+                  title: "Context & Continuity",
+                  color: "purple-700",
+                  border: "border-purple-100",
+                  text: "We don't just automate tasks. Twinly learns your mental model, so every action fits your unique way of working.",
+                  delay: 0.5,
+                },
+                {
+                  icon: <Brain className="h-7 w-7 text-blue-500 animate-pulse" />,
+                  title: "Long-Term Memory",
+                  color: "blue-700",
+                  border: "border-blue-100",
+                  text: "Twinly builds a memory graph of your digital life, enabling decisions that match your habits and preferences.",
+                  delay: 0.6,
+                },
+                {
+                  icon: <Zap className="h-7 w-7 text-pink-500 animate-bounce" />,
+                  title: "Fewer Prompts, More Results",
+                  color: "pink-700",
+                  border: "border-pink-100",
+                  text: "No more juggling 10 prompts for one task. Twinly understands intent and handles complexity for you.",
+                  delay: 0.7,
+                },
+                {
+                  icon: <Shield className="h-7 w-7 text-amber-500 animate-pulse" />,
+                  title: "A True Second Brain",
+                  color: "amber-700",
+                  border: "border-amber-100",
+                  text: "Twinly isn't just an assistant—it's a proactive, evolving digital twin that thinks and acts like you.",
+                  delay: 0.8,
+                },
+              ].map((item) => (
+                <motion.div
+                  key={item.title}
+                  className={`p-6 rounded-xl bg-white/70 border ${item.border} shadow-md hover:shadow-xl transition group`}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: item.delay, duration: 0.6, type: "spring" }}
+                  viewport={{ once: true }}
+                  whileHover={{
+                    scale: 1.04,
+                    boxShadow: "0 8px 32px 0 rgba(80, 80, 200, 0.15)",
+                    borderColor: "#a78bfa",
+                  }}
+                >
+                  <div className="mb-3">{item.icon}</div>
+                  <h3 className={`text-xl font-semibold text-${item.color} mb-2`}>
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-700">{item.text}</p>
+                </motion.div>
+              ))}
             </div>
-            <h2 className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 [background-size:200%_auto] animate-gradient py-2">
-              What People Are Saying
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Twinly is changing how people manage their digital lives.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <TestimonialCard
-              quote="Twinly has completely transformed how I manage my day. It's like having a personal assistant who knows exactly how I think."
-              author="Sarah Johnson"
-              role="Marketing Director"
-              avatarUrl="/professional-woman-portrait.png"
-              gradient="from-purple-100 to-pink-50 hover:from-purple-200 hover:to-pink-100 shadow-lg hover:shadow-xl transition-all duration-300"
-            />
-
-            <TestimonialCard
-              quote="The way Twinly learns my preferences is almost magical. Within a week, it was suggesting exactly what I needed before I even asked."
-              author="Michael Chen"
-              role="Software Engineer"
-              avatarUrl="/professional-man-portrait.png"
-              gradient="from-blue-500/10 to-cyan-500/10"
-            />
-
-            <TestimonialCard
-              quote="As someone who juggles multiple projects, Twinly has been a game-changer. It's like it can read my mind about what needs to be prioritized."
-              author="Aisha Patel"
-              role="Project Manager"
-              avatarUrl="/professional-indian-woman.png"
-              gradient="from-amber-500/10 to-orange-500/10"
-            />
-          </div>
+          </motion.div>
         </div>
       </section>
-
       {/* What is Twinly Section */}
-      <section id="what-is-twinly" className="h-screen flex items-center relative bg-black">
+      <section
+        id="what-is-twinly"
+        className="h-screen flex items-center relative bg-black"
+      >
         {/* Enhanced background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -337,22 +385,23 @@ export default function LandingPage() {
 
         {/* Subtle grid overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        
+
         <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium text-white mb-6">
               <Brain className="h-5 w-5 mr-2 text-purple-400" />
               <span>What is Twinly?</span>
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">
               Your AI Cognitive Twin
             </h2>
-            
+
             <p className="text-xl text-white/80 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Twinly is an AI-powered cognitive twin that learns from your digital footprint,
-              connects to your favorite tools, and helps you work smarter by remembering
-              everything important and taking actions on your behalf.
+              Twinly is an AI-powered cognitive twin that learns from your
+              digital footprint, connects to your favorite tools, and helps you
+              work smarter by remembering everything important and taking
+              actions on your behalf.
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
@@ -360,45 +409,56 @@ export default function LandingPage() {
                 {
                   icon: <Wrench className="h-6 w-6" />,
                   title: "Connects to Your Tools",
-                  desc: "Seamlessly integrates with Gmail, Slack, Notion, and more"
+                  desc: "Seamlessly integrates with Gmail, Slack, Notion, and more",
                 },
                 {
                   icon: <Database className="h-6 w-6" />,
                   title: "Remembers Everything",
-                  desc: "Creates a searchable memory of your digital interactions"
+                  desc: "Creates a searchable memory of your digital interactions",
                 },
                 {
                   icon: <ListTodo className="h-6 w-6" />,
                   title: "Prioritizes Tasks",
-                  desc: "Helps organize and summarize your daily activities"
+                  desc: "Helps organize and summarize your daily activities",
                 },
                 {
                   icon: <Zap className="h-6 w-6" />,
                   title: "Takes Action",
-                  desc: "Handles emails, notes, and tasks autonomously"
-                }
+                  desc: "Handles emails, notes, and tasks autonomously",
+                },
               ].map((item, index) => (
-                <div key={index} className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                <div
+                  key={index}
+                  className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
+                >
                   <div className="text-purple-400 mb-4">{item.icon}</div>
-                  <h3 className="text-lg font-semibold mb-2 text-white">{item.title}</h3>
+                  <h3 className="text-lg font-semibold mb-2 text-white">
+                    {item.title}
+                  </h3>
                   <p className="text-white/70">{item.desc}</p>
                 </div>
               ))}
             </div>
 
-            <Button size="lg" className="mt-12 bg-white text-violet-600 hover:bg-white/90 transition-all duration-200">
+            <Button
+              size="lg"
+              className="mt-12 bg-white text-violet-600 hover:bg-white/90 transition-all duration-200"
+              onClick={() => router.push('/dashboard')}
+            >
               See Twinly in Action
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
       </section>
-
       {/* How It Works Section - Light Theme */}
-      <section id="how-it-works" className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+      <section
+        id="how-it-works"
+        className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden"
+      >
         {/* Interactive background pattern */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-5" />
-        
+
         {/* Colorful orbs */}
         <div className="absolute -left-20 top-20 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-blob" />
         <div className="absolute -right-20 top-40 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
@@ -410,7 +470,7 @@ export default function LandingPage() {
               <Clock className="h-5 w-5 mr-2 text-blue-500" />
               <span>How It Works</span>
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600">
               Three Simple Steps to Get Started
             </h2>
@@ -421,25 +481,32 @@ export default function LandingPage() {
                   step: "01",
                   title: "Connect Your Tools",
                   desc: "Securely connect your Gmail, Slack, Notion, and other apps",
-                  icon: <Wrench className="h-12 w-12" />
+                  icon: <Wrench className="h-12 w-12" />,
                 },
                 {
                   step: "02",
                   title: "Chat with Twinly",
                   desc: "Interact naturally through our intuitive chat interface",
-                  icon: <MessageSquare className="h-12 w-12" />
+                  icon: <MessageSquare className="h-12 w-12" />,
                 },
                 {
                   step: "03",
                   title: "Let It Act",
                   desc: "Watch as Twinly handles tasks and communications for you",
-                  icon: <Zap className="h-12 w-12" />
-                }
+                  icon: <Zap className="h-12 w-12" />,
+                },
               ].map((item, index) => (
-                <div key={index} className="p-8 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+                <div
+                  key={index}
+                  className="p-8 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
                   <div className="text-purple-600 mb-6">{item.icon}</div>
-                  <div className="text-purple-600 text-sm font-medium mb-4">Step {item.step}</div>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800">{item.title}</h3>
+                  <div className="text-purple-600 text-sm font-medium mb-4">
+                    Step {item.step}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                    {item.title}
+                  </h3>
                   <p className="text-gray-600">{item.desc}</p>
                 </div>
               ))}
@@ -447,10 +514,11 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-    
       {/* Use Cases Section */}
-      <section id="use-cases" className="h-screen flex items-center relative bg-black">
+      <section
+        id="use-cases"
+        className="h-screen flex items-center relative bg-black"
+      >
         {/* Enhanced background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -461,14 +529,14 @@ export default function LandingPage() {
 
         {/* Subtle grid overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        
+
         <div className="w-full px-4 max-w-screen-2xl mx-auto py-12 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium text-white mb-6">
               <Users className="h-5 w-5 mr-2 text-purple-400" />
               <span>Use Cases</span>
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl font-bold mb-12 text-white">
               What Can Twinly Do For You?
             </h2>
@@ -478,37 +546,42 @@ export default function LandingPage() {
                 {
                   icon: <Mail />,
                   title: "Email Management",
-                  desc: "Summarize unread emails and draft contextual responses"
+                  desc: "Summarize unread emails and draft contextual responses",
                 },
                 {
                   icon: <MessageSquare />,
                   title: "Meeting Memory",
-                  desc: "Recall and summarize past meeting discussions"
+                  desc: "Recall and summarize past meeting discussions",
                 },
                 {
                   icon: <Calendar />,
                   title: "Smart Planning",
-                  desc: "Plan your week based on pending tasks and priorities"
+                  desc: "Plan your week based on pending tasks and priorities",
                 },
                 {
                   icon: <ListTodo />,
                   title: "Task Automation",
-                  desc: "Convert Slack threads into Notion checklists"
+                  desc: "Convert Slack threads into Notion checklists",
                 },
                 {
                   icon: <Clock />,
                   title: "Schedule Management",
-                  desc: "Find optimal meeting slots and send invites"
+                  desc: "Find optimal meeting slots and send invites",
                 },
                 {
                   icon: <Brain />,
                   title: "Knowledge Base",
-                  desc: "Build your personal searchable knowledge base"
-                }
+                  desc: "Build your personal searchable knowledge base",
+                },
               ].map((item, index) => (
-                <div key={index} className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                <div
+                  key={index}
+                  className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
+                >
                   <div className="text-purple-400 mb-4">{item.icon}</div>
-                  <h3 className="text-xl font-semibold mb-4 text-white">{item.title}</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-white">
+                    {item.title}
+                  </h3>
                   <p className="text-white/70">{item.desc}</p>
                 </div>
               ))}
@@ -516,14 +589,14 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-     th
-
       {/* Privacy & Trust Section - Light Theme */}
-      <section id="privacy" className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+      <section
+        id="privacy"
+        className="h-screen flex items-center relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden"
+      >
         {/* Interactive background pattern */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-5" />
-        
+
         {/* Colorful orbs */}
         <div className="absolute -left-20 top-20 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-blob" />
         <div className="absolute -right-20 top-40 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
@@ -546,7 +619,7 @@ export default function LandingPage() {
               <Shield className="h-5 w-5 mr-2 text-blue-500" />
               <span>Privacy & Trust</span>
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600">
               Your Data, Your Control
             </h2>
@@ -556,22 +629,27 @@ export default function LandingPage() {
                 {
                   icon: <Lock />,
                   title: "End-to-End Encryption",
-                  desc: "Your data is encrypted at rest and in transit"
+                  desc: "Your data is encrypted at rest and in transit",
                 },
                 {
                   icon: <Shield />,
                   title: "No Training Data",
-                  desc: "Your data is never used to train our models"
+                  desc: "Your data is never used to train our models",
                 },
                 {
                   icon: <Database />,
                   title: "Local-First Coming Soon",
-                  desc: "Option to run Twinly entirely on your device"
-                }
+                  desc: "Option to run Twinly entirely on your device",
+                },
               ].map((item, index) => (
-                <div key={index} className="p-8 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+                <div
+                  key={index}
+                  className="p-8 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
                   <div className="text-purple-600 mb-6">{item.icon}</div>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800">{item.title}</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                    {item.title}
+                  </h3>
                   <p className="text-gray-600">{item.desc}</p>
                 </div>
               ))}
@@ -579,22 +657,24 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Vision Section - Dark Theme */}
       <section id="vision" className="relative bg-black py-24">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10" />
-        
+
         <div className="w-full px-4 max-w-screen-2xl mx-auto relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <blockquote className="text-3xl md:text-4xl font-bold text-white leading-relaxed">
-              &quot;We&apos;re building more than an assistant — we&apos;re building your digital memory.&quot;
+              &quot;We&apos;re building more than an assistant — we&apos;re
+              building your digital memory.&quot;
             </blockquote>
           </div>
         </div>
       </section>
-
       {/* CTA Section */}
-      <section id="cta" className="h-screen flex items-center relative bg-black">
+      <section
+        id="cta"
+        className="h-screen flex items-center relative bg-black"
+      >
         {/* Enhanced background gradient - same as hero section */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
@@ -638,7 +718,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer id="footer" className="bg-slate-900 text-white py-12">
         <div className="w-full px-4 max-w-screen-2xl mx-auto">
