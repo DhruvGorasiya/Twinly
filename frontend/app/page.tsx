@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
@@ -24,18 +25,33 @@ import { GradientButton } from "@/components/gradient-button";
 import { ScrollButton } from "@/components/scroll-button";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import twinlyLogo from '@/app/assets/twinly-logo.png'
 
 export default function LandingPage() {
   const router = useRouter();
 
   return (
     <div className="min-h-screen overflow-hidden">
+      {/* Twinly Logo Top Left */}
+      <div className="fixed top-6 left-6 z-50">
+        <Link href="/">
+          <Image
+            src={twinlyLogo}
+            alt="Twinly Logo"
+            width={240}
+            height={240}
+            className="h-32 w-auto drop-shadow-lg hover:scale-105 transition-transform duration-200"
+            priority
+          />
+        </Link>
+      </div>
       {/* Hero Section */}
       <section
         id="hero"
         className="relative bg-black h-screen flex items-center"
       >
         {/* Enhanced background gradient */}
+        
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 pointer-events-none" />
 
         {/* Animated floating shapes with better positioning and effects */}
