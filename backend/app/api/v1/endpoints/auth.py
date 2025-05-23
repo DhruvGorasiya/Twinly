@@ -26,8 +26,8 @@ class ClerkUserData(BaseModel):
 
 class UserData(BaseModel):
     id: str
-    first_name: str
-    last_name: str
+    firstName: str
+    lastName: str
     email: EmailStr
 
 @router.post("/token", response_model=Token)
@@ -53,12 +53,43 @@ async def register(user_data: UserData):
     return {"message": "User registered successfully", "user": user_data}
 
 @router.post("/login")
-async def login(user_data: UserData):
+async def login(user_data: UserData, db: Session = Depends(get_db)):
     """
-    Login user with Clerk.js data
+    Login user with Clerk.js data and add to database if not exists
     """
-    print("Logged in User from Clerk:", user_data.dict())
-    return {"message": "User logged in successfully", "user": user_data}
+    try:
+        # Check if user already exists
+        existing_user = db.query(User).filter(User.id == user_data.id).first()
+        
+        if existing_user:
+            return {
+                "message": "User logged in successfully",
+                "user": user_data
+            }
+        
+        # User doesn't exist, create new user
+        new_user = User(
+            id=user_data.id,
+            email=user_data.email,
+            first_name=user_data.firstName,  # Changed to match Clerk.js
+            last_name=user_data.lastName     # Changed to match Clerk.js
+        )
+        
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        
+        return {
+            "message": "User created and logged in successfully",
+            "user": user_data
+        }
+    except Exception as e:
+        db.rollback()
+        print(f"Error in login endpoint: {str(e)}")  # Add logging
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 
 

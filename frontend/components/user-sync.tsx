@@ -5,8 +5,8 @@ import { useUser, useAuth } from "@clerk/nextjs";
 
 interface UserData {
   id: string;
-  first_name: string;
-  last_name: string;
+  firstName : string;
+  lastName: string;
   email: string;
 }
 
@@ -27,8 +27,8 @@ export function UserSync() {
       // Create user data object with default empty strings for null values
       const newUserData: UserData = {
         id: user.id,
-        first_name: user.firstName || '',
-        last_name: user.lastName || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
         email: primaryEmail
       };
 
@@ -56,7 +56,6 @@ export function UserSync() {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              Origin: "https://twinly.net",
             },
             body: JSON.stringify(newUserData),
           });

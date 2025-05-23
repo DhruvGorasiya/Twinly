@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
-from app.models.base import Base
+from app.models import Base, User, Conversation, Message
 
 # Create SQLAlchemy engine
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
@@ -19,4 +19,10 @@ def get_db():
 
 def init_db():
     """Initialize the database by creating all tables"""
+    # Create schema if it doesn't exist
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS public"))
+        conn.commit()
+    
+    # Create all tables
     Base.metadata.create_all(bind=engine) 

@@ -15,7 +15,7 @@ class Message(BaseModel):
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-    # Relationship to Conversation model
+    # Use string reference for the relationship
     conversation = relationship("Conversation", back_populates="messages")
 
     def __init__(self, **kwargs):
