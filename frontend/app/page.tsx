@@ -24,8 +24,69 @@ import { FeatureCard } from "@/components/feature-card";
 import { GradientButton } from "@/components/gradient-button";
 import { ScrollButton } from "@/components/scroll-button";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import twinlyLogo from '@/app/assets/twinly-logo.png'
+import { createRoot } from 'react-dom/client';
+import { useEffect } from "react";
+
+export function PageTransition() {
+  useEffect(() => {
+    return () => {
+      const container = document.getElementById('transition-container');
+      if (container) {
+        container.remove();
+      }
+    };
+  }, []);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {/* Background gradient */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-indigo-600/20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        />
+
+        {/* Main transition element */}
+        <motion.div
+          className="relative z-10 flex items-center justify-center"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 1.1, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          {/* Logo animation */}
+          <div className="relative w-24 h-24 flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-20 blur-xl" />
+            <div className="relative text-4xl font-bold text-white">T</div>
+          </div>
+        </motion.div>
+
+        {/* Slide overlay */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-black via-blue-900/90 to-black"
+          initial={{ y: "100%" }}
+          animate={{ y: ["100%", "0%", "0%", "-100%"] }}
+          transition={{
+            duration: 0.6,
+            ease: [0.22, 1, 0.36, 1],
+            times: [0, 0.4, 0.6, 1],
+          }}
+        />
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 export default function LandingPage() {
   const router = useRouter();
@@ -87,7 +148,25 @@ export default function LandingPage() {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity duration-200"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={async () => {
+                    // Show transition
+                    const PageTransition = (await import('@/components/page-transition')).PageTransition;
+                    const transitionContainer = document.createElement('div');
+                    transitionContainer.id = 'transition-container';
+                    document.body.appendChild(transitionContainer);
+                    const root = createRoot(transitionContainer);
+                    root.render(<PageTransition />);
+                    
+                    // Navigate after animation and clean up
+                    setTimeout(() => {
+                      router.push("/dashboard");
+                      // Clean up after navigation
+                      setTimeout(() => {
+                        root.unmount();
+                        transitionContainer.remove();
+                      }, 400);
+                    }, 300);
+                  }}
                 >
                   Try Twinly Now
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -716,11 +795,30 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 className="bg-white text-violet-600 transition-all duration-200 ease-out hover:bg-white/90 hover:scale-105 active:scale-98"
+                onClick={async () => {
+                  // Show transition
+                  const PageTransition = (await import('@/components/page-transition')).PageTransition;
+                  const transitionContainer = document.createElement('div');
+                  transitionContainer.id = 'transition-container';
+                  document.body.appendChild(transitionContainer);
+                  const root = createRoot(transitionContainer);
+                  root.render(<PageTransition />);
+                  
+                  // Navigate after animation and clean up
+                  setTimeout(() => {
+                    router.push("/dashboard");
+                    // Clean up after navigation
+                    setTimeout(() => {
+                      root.unmount();
+                      transitionContainer.remove();
+                    }, 400);
+                  }, 300);
+                }}
               >
-                <Link href="/dashboard" className="flex items-center">
+                <span className="flex items-center">
                   Get Started for Free
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
-                </Link>
+                </span>
               </Button>
 
               <Button

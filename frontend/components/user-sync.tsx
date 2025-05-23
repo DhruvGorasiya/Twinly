@@ -10,13 +10,13 @@ interface UserData {
   email: string;
 }
 
-// Update the base URL to use environment variable
-// const BACKEND_URL = "http://localhost:8000";
+
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
 export function UserSync() {
   const { user, isLoaded } = useUser();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, getToken } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
@@ -40,6 +40,8 @@ export function UserSync() {
       // Send data to backend
       const sendUserData = async () => {
         try {
+          const token = await getToken();
+
           // Determine if this is a new registration or login
           const isNewUser = user.createdAt === user.updatedAt;
           const endpoint = isNewUser
@@ -56,6 +58,7 @@ export function UserSync() {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(newUserData),
           });
