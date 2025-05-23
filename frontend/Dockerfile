@@ -19,9 +19,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # Accept build argument for backend URL
-ARG NEXT_PUBLIC_BACKEND_URL
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
-# ENV NEXT_PUBLIC_BACKEND_URL=https://twinly-backend-357648867200.us-east4.run.app
+# ARG NEXT_PUBLIC_BACKEND_URL
+# ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+ENV NEXT_PUBLIC_BACKEND_URL=https://twinly-backend-357648867200.us-east4.run.app
 
 # Build the application with warnings ignored
 RUN npm run build --no-lint
