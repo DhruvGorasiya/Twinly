@@ -22,6 +22,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 # ARG NEXT_PUBLIC_BACKEND_URL
 # ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV NEXT_PUBLIC_BACKEND_URL=https://twinly-backend-357648867200.us-east4.run.app
+ENV NEXT_PUBLIC_FRONTEND_URL=https://twinly.net
 
 # Build the application with warnings ignored
 RUN npm run build --no-lint
