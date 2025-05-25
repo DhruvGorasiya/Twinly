@@ -30,6 +30,16 @@ class Settings(BaseSettings):
     # OpenAI Configuration
     OPENAI_API_KEY: str
     
+    CLERK_JWKS_URL: str | None = None
+    
+    # Google OAuth Configuration
+    GOOGLE_OAUTH_CREDENTIALS_FILE: str
+    GOOGLE_REDIRECT_URI: str
+    
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+    REDIRECT_URI: str
+    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Override CORS origins if environment variable is set
