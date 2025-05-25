@@ -5,8 +5,8 @@ import { useUser, useAuth } from "@clerk/nextjs";
 
 interface UserData {
   id: string;
-  firstName : string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
 }
 
@@ -27,8 +27,8 @@ export function UserSync() {
       // Create user data object with default empty strings for null values
       const newUserData: UserData = {
         id: user.id,
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
+        first_name: user.firstName || '',
+        last_name: user.lastName || '',
         email: primaryEmail
       };
 
@@ -60,7 +60,10 @@ export function UserSync() {
               Accept: "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(newUserData),
+            body: JSON.stringify({
+              user: newUserData,
+              isNewUser: isNewUser
+            }),
           });
 
           console.log('Response status:', response.status);

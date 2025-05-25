@@ -6,8 +6,8 @@ from pydantic import BaseModel, EmailStr
 
 class UserData(BaseModel):
     id: str
-    firstName: str
-    lastName: str
+    first_name: str
+    last_name: str
     email: EmailStr
 
 app = FastAPI(

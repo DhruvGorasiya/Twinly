@@ -1,83 +1,79 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from app.core.security import create_access_token, get_password_hash, verify_password
 from app.db.session import get_db
-from app.models.user import User
-from pydantic import BaseModel, EmailStr
+from app.repositories.user_repository import UserRepository
+from app.services.auth_service import AuthService
+from app.services.user_service import UserService
+from app.schemas.auth import Token
+from app.schemas.user import UserData
+from pydantic import BaseModel
+
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class UserCreate(BaseModel):
-    email: str
-    password: str
-    full_name: str
-
-class ClerkUserData(BaseModel):
-    id: str
-    firstName: str
-    lastName: str
-    email: str
-
-class UserData(BaseModel):
-    id: str
-    firstName: str
-    lastName: str
-    email: EmailStr
+class LoginRequest(BaseModel):
+    user: UserData
+    isNewUser: bool
 
 @router.post("/token", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    user_repository = UserRepository(db)
+    auth_service = AuthService(user_repository)
+    
+    user = auth_service.authenticate_user(form_data.username, form_data.password)
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = auth_service.create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
-# New endpoints for Clerk.js integration
 @router.post("/register")
-async def register(user_data: UserData):
+async def register(user_data: UserData, db: Session = Depends(get_db)):
     """
     Register a new user with Clerk.js data
     """
+    user_repository = UserRepository(db)
+    auth_service = AuthService(user_repository)
+    
     print("Registered User from Clerk:", user_data.dict())
     return {"message": "User registered successfully", "user": user_data}
 
 @router.post("/login")
-async def login(user_data: UserData, db: Session = Depends(get_db)):
+async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     """
     Login user with Clerk.js data and add to database if not exists
     """
     try:
-        # Check if user already exists
-        existing_user = db.query(User).filter(User.id == user_data.id).first()
+        user_data = login_request.user
+        isNewUser = login_request.isNewUser
         
-        if existing_user:
+        user_repository = UserRepository(db)
+        auth_service = AuthService(user_repository)
+        user_service = UserService(user_repository)
+        
+        # Check if user already exists
+        existing_user = user_repository.get_by_email(user_data.email)
+        
+        if existing_user and not isNewUser:
+            print("User already exists")
+            user_service.delete_user(existing_user.id)
+            user_service.create_user(user_data)
+            print("User deleted and created")
             return {
                 "message": "User logged in successfully",
                 "user": user_data
             }
         
+        print("User Data:", user_data)
+        print("Existing User:", existing_user)
         # User doesn't exist, create new user
-        new_user = User(
-            id=user_data.id,
-            email=user_data.email,
-            first_name=user_data.firstName,  # Changed to match Clerk.js
-            last_name=user_data.lastName     # Changed to match Clerk.js
-        )
-        
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
+        user_service.create_user(user_data)
         
         return {
             "message": "User created and logged in successfully",
@@ -85,11 +81,8 @@ async def login(user_data: UserData, db: Session = Depends(get_db)):
         }
     except Exception as e:
         db.rollback()
-        print(f"Error in login endpoint: {str(e)}")  # Add logging
+        print(f"Error in login endpoint: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=str(e)
         )
-
-
-

@@ -12,9 +12,11 @@ export async function POST() {
     // Get the user's JWT token
     const token = await getToken();
 
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
     // Here you would make a request to your backend
     // Replace this URL with your actual backend URL
-    const response = await fetch("YOUR_BACKEND_URL/api/users", {
+    const response = await fetch(`${BACKEND_URL}/api/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

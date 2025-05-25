@@ -12,9 +12,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def get_db():
     """Dependency for getting DB session"""
     db = SessionLocal()
+    print("Database session created")  # Debug log
     try:
         yield db
     finally:
+        print("Database session closed")  # Debug log
         db.close()
 
 def init_db():
