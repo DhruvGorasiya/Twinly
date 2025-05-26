@@ -11,6 +11,5 @@ class UserRepository(BaseRepository[User]):
         return self.db.query(User).filter(User.email == email).first()
 
     def get_by_id(self, user_id: str) -> Optional[User]:
-        user = self.db.query(User).filter(str(User.id) == user_id).first()
-        print(f"Found user: {user}")
+        user = self.db.query(User).filter(User.id == user_id).first()
         return user

@@ -1,9 +1,10 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, FileText, Table, Video, MessageSquare, Book } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
 
 interface IntegrationCard {
   name: string;
@@ -61,10 +62,57 @@ const integrations: IntegrationCard[] = [
 ];
 
 export default function IntegrationsPage() {
+  const { user } = useUser();
   const [connectedIntegrations, setConnectedIntegrations] = useState<string[]>([]);
   const [connecting, setConnecting] = useState<string | null>(null);
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+  useEffect(() => {
+    async function checkGmailStatus() {
+      if (!user?.id) return;
+      
+      try {
+        const response = await fetch(
+          `${BACKEND_URL}/api/v1/integrations/gmail/status?user_id=${user.id}`
+        );
+        const data = await response.json();
+
+        console.log("data", data);
+        
+        if (data.status === "connected") {
+          console.log("setting connectedIntegrations");
+          setConnectedIntegrations(prev => 
+            prev.includes("Gmail") ? prev : [...prev, "Gmail"]
+          );
+        }
+      } catch (error) {
+        console.error("Error checking Gmail status:", error);
+      }
+    }
+
+
+    checkGmailStatus();
+  }, [BACKEND_URL, user?.id]);
 
   const handleToggle = async (integrationName: string) => {
+    if (integrationName === "Gmail") {
+      if (connectedIntegrations.includes("Gmail")) {
+        try {
+          await fetch(`${BACKEND_URL}/api/v1/integrations/gmail/disconnect?user_id=${user?.id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          setConnectedIntegrations(prev => prev.filter(name => name !== "Gmail"));
+        } catch (error) {
+          console.error("Error disconnecting Gmail:", error);
+        }
+      } else {
+        window.location.href = `${BACKEND_URL}/api/v1/integrations/gmail/auth`;
+      }
+      return;
+    }
     setConnecting(integrationName);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setConnectedIntegrations(prev => 

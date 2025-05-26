@@ -54,26 +54,26 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
         isNewUser = login_request.isNewUser
         
         user_repository = UserRepository(db)
-        auth_service = AuthService(user_repository)
         user_service = UserService(user_repository)
         
         # Check if user already exists
-        existing_user = user_repository.get_by_email(user_data.email)
+        # existing_user = user_repository.get_by_email(user_data.email)
+        existing_user = user_repository.get_by_id(user_data.id)
         
-        if existing_user and not isNewUser:
-            print("User already exists")
+        if not existing_user:
+            user_service.create_user(user_data)
+            return {
+                "message": "User created and logged in successfully",
+                "user": user_data
+            }
+            
+        if existing_user and isNewUser:
             user_service.delete_user(existing_user.id)
             user_service.create_user(user_data)
-            print("User deleted and created")
             return {
                 "message": "User logged in successfully",
                 "user": user_data
             }
-        
-        print("User Data:", user_data)
-        print("Existing User:", existing_user)
-        # User doesn't exist, create new user
-        user_service.create_user(user_data)
         
         return {
             "message": "User created and logged in successfully",
