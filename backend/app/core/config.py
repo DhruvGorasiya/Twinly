@@ -41,7 +41,6 @@ class Settings(BaseSettings):
     GOOGLE_TOKEN_URI: str = os.getenv("GOOGLE_TOKEN_URI", "https://oauth2.googleapis.com/token")
     GOOGLE_AUTH_PROVIDER_CERT_URL: str = os.getenv("GOOGLE_AUTH_PROVIDER_CERT_URL", "https://www.googleapis.com/oauth2/v1/certs")
     GOOGLE_REDIRECT_URI: str = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:3000/oauth/callback")
-    GOOGLE_JAVASCRIPT_ORIGINS: List[str] = os.getenv("GOOGLE_JAVASCRIPT_ORIGINS", "http://localhost:3000").split(",")
     
     FRONTEND_URL: str = "http://localhost:3000"
     

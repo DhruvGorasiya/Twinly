@@ -109,7 +109,7 @@ export default function IntegrationsPage() {
           console.error("Error disconnecting Gmail:", error);
         }
       } else {
-        window.location.href = `${BACKEND_URL}/api/v1/integrations/gmail/auth`;
+        window.location.href = `${BACKEND_URL}/api/v1/integrations/gmail/auth?user_id=${user?.id}`;
       }
       return;
     }

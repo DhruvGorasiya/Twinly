@@ -69,29 +69,44 @@ def get_user_info_from_token(access_token: str) -> dict:
     return response.json()
 
 @router.get("/gmail/auth")
-async def gmail_auth():
-    print(settings.GOOGLE_REDIRECT_URI)
-    flow = Flow.from_client_config(
-        {
-            "web": {
-                "client_id": settings.GOOGLE_CLIENT_ID,
-                "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
-                "auth_uri": settings.GOOGLE_AUTH_URI,
-                "token_uri": settings.GOOGLE_TOKEN_URI
-            }
-        },
-        scopes=google_scopes,
-        redirect_uri=settings.GOOGLE_REDIRECT_URI
-    )
-    
-    authorization_url, state = flow.authorization_url(
-        access_type="offline",
-        include_granted_scopes="true",
-        prompt="consent"
-    )
-    
-    return RedirectResponse(url=authorization_url)
+async def gmail_auth(user_id: str, db: Session = Depends(get_db)):
+    try:
+        # First check if there's an existing integration
+        integration_service = IntegrationService(db)
+        existing_integration = integration_service.get_integration(user_id, ServiceType.GMAIL)
+        
+        # If integration exists and is revoked, we'll update it later in the callback
+        if existing_integration and existing_integration.status == IntegrationStatus.revoked:
+            print(f"Found revoked integration for user {user_id}, will update in callback")
+        
+        print(settings.GOOGLE_REDIRECT_URI)
+        flow = Flow.from_client_config(
+            {
+                "web": {
+                    "client_id": settings.GOOGLE_CLIENT_ID,
+                    "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                    "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                    "auth_uri": settings.GOOGLE_AUTH_URI,
+                    "token_uri": settings.GOOGLE_TOKEN_URI
+                }
+            },
+            scopes=google_scopes,
+            redirect_uri=settings.GOOGLE_REDIRECT_URI
+        )
+        
+        authorization_url, state = flow.authorization_url(
+            access_type="offline",
+            include_granted_scopes="true",
+            prompt="consent"
+        )
+        
+        return RedirectResponse(url=authorization_url)
+    except Exception as e:
+        logging.error(f"Error in Gmail auth: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 
 @router.post("/gmail/callback")
 async def gmail_oauth_callback_post(request: OAuthCallbackRequest, db: Session = Depends(get_db)):
@@ -113,23 +128,64 @@ async def gmail_oauth_callback_post(request: OAuthCallbackRequest, db: Session =
                 detail=f"User with email {profile['email']} not found. Please login first."
             )
 
-        # Create the integration object
-        integration = IntegrationCreate(
-            user_id=user.id,  # Use the user's ID instead of email
-            service_type=ServiceType.GMAIL,
-            external_user_id=profile["email"],
-            access_token=access_token,
-            refresh_token=tokens.get("refresh_token"),
-            expires_at=datetime.utcnow() + timedelta(seconds=tokens["expires_in"]),
-            scopes=tokens.get("scope", "").split(" "),
-            service_metadata={"email_address": profile["email"]}
-        )
-
-        # Save the integration
+        # Step 4: Check for existing integration
         integration_service = IntegrationService(db)
-        result = integration_service.create_integration(integration)
+        existing_integration = integration_service.get_integration(user.id, ServiceType.GMAIL)
 
-        return {"status": "success", "message": "Gmail integration successful", "data": result}
+        if existing_integration:
+            # Update existing integration
+            if existing_integration.status == IntegrationStatus.revoked:
+                # Update the revoked integration
+                updated_integration = integration_service.update_integration(
+                    existing_integration.id,
+                    {
+                        "access_token": access_token,
+                        "refresh_token": tokens.get("refresh_token"),
+                        "expires_at": datetime.utcnow() + timedelta(seconds=tokens["expires_in"]),
+                        "scopes": tokens.get("scope", "").split(" "),
+                        "status": IntegrationStatus.active,
+                        "service_metadata": {"email_address": profile["email"]}
+                    }
+                )
+                return {
+                    "status": "success", 
+                    "message": "Gmail integration reactivated successfully", 
+                    "data": updated_integration
+                }
+            else:
+                # Update active integration with new tokens
+                updated_integration = integration_service.update_integration(
+                    existing_integration.id,
+                    {
+                        "access_token": access_token,
+                        "refresh_token": tokens.get("refresh_token"),
+                        "expires_at": datetime.utcnow() + timedelta(seconds=tokens["expires_in"]),
+                        "scopes": tokens.get("scope", "").split(" ")
+                    }
+                )
+                return {
+                    "status": "success", 
+                    "message": "Gmail integration updated successfully", 
+                    "data": updated_integration
+                }
+        else:
+            # Create new integration
+            integration = IntegrationCreate(
+                user_id=user.id,
+                service_type=ServiceType.GMAIL,
+                external_user_id=profile["email"],
+                access_token=access_token,
+                refresh_token=tokens.get("refresh_token"),
+                expires_at=datetime.utcnow() + timedelta(seconds=tokens["expires_in"]),
+                scopes=tokens.get("scope", "").split(" "),
+                service_metadata={"email_address": profile["email"]}
+            )
+            result = integration_service.create_integration(integration)
+            return {
+                "status": "success", 
+                "message": "Gmail integration created successfully", 
+                "data": result
+            }
 
     except Exception as e:
         logging.error(f"Gmail OAuth callback failed: {str(e)}")
