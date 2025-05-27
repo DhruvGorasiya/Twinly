@@ -11,6 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies into wheels
