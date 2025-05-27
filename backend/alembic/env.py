@@ -14,6 +14,16 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 # Load environment variables
 load_dotenv()
 
+# Get database URL from environment variables
+def get_url():
+    return "postgresql://{}:{}@{}:{}/{}".format(
+        os.getenv("POSTGRES_USER", "postgres"),
+        os.getenv("POSTGRES_PASSWORD", "postgres"),
+        os.getenv("POSTGRES_SERVER", "localhost"),
+        os.getenv("POSTGRES_PORT", "5432"),
+        os.getenv("POSTGRES_DB", "twinly_db")
+    )
+
 # Import your models
 from app.models import Base
 from app.core.config import settings
@@ -21,6 +31,9 @@ from app.core.config import settings
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Override the sqlalchemy.url with our dynamic URL
+config.set_main_option("sqlalchemy.url", get_url())
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

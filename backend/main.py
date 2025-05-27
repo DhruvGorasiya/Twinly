@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1.api import api_router
 from pydantic import BaseModel, EmailStr
+import subprocess
+import time
+import os
 
 class UserData(BaseModel):
     id: str
@@ -47,6 +50,22 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 async def root():
     return {"message": "Welcome to FastAPI Backend"}
 
+def start_cloud_sql_proxy():
+    try:
+        # Check if port 5432 is already in use
+        subprocess.check_output(["lsof", "-i", ":5432"])
+        print("Cloud SQL Proxy already running on port 5432.")
+    except subprocess.CalledProcessError:
+        print("Starting Cloud SQL Proxy...")
+        subprocess.Popen([
+            "cloud-sql-proxy",
+            "twinly-459118:us-central1:twinly",
+            f"--credentials-file={os.path.expanduser('~/keys/cloudsql-proxy.json')}",
+            "--port=5432"
+        ])
+        time.sleep(1)
+
 if __name__ == "__main__":
+    start_cloud_sql_proxy()
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 

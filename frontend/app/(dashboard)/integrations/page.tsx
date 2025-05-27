@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Mail, FileText, Table, Video, MessageSquare, Book } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
+import { useToast } from "@/components/ui/use-toast";
 
 interface IntegrationCard {
   name: string;
@@ -63,6 +64,7 @@ const integrations: IntegrationCard[] = [
 
 export default function IntegrationsPage() {
   const { user } = useUser();
+  const { toast } = useToast();
   const [connectedIntegrations, setConnectedIntegrations] = useState<string[]>([]);
   const [connecting, setConnecting] = useState<string | null>(null);
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
@@ -95,10 +97,19 @@ export default function IntegrationsPage() {
   }, [BACKEND_URL, user?.id]);
 
   const handleToggle = async (integrationName: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in or create an account to connect integrations.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (integrationName === "Gmail") {
       if (connectedIntegrations.includes("Gmail")) {
         try {
-          await fetch(`${BACKEND_URL}/api/v1/integrations/gmail/disconnect?user_id=${user?.id}`, {
+          await fetch(`${BACKEND_URL}/api/v1/integrations/gmail/disconnect?user_id=${user.id}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json'
@@ -109,7 +120,7 @@ export default function IntegrationsPage() {
           console.error("Error disconnecting Gmail:", error);
         }
       } else {
-        window.location.href = `${BACKEND_URL}/api/v1/integrations/gmail/auth?user_id=${user?.id}`;
+        window.location.href = `${BACKEND_URL}/api/v1/integrations/gmail/auth?user_id=${user.id}`;
       }
       return;
     }

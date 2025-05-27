@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Twinly - Your AI Twin",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <html lang="en">
         <body>
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
