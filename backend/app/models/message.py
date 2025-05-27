@@ -12,7 +12,7 @@ class Message(BaseModel):
 
     # Core fields
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    conversation_id = Column(UUID(as_uuid=True), ForeignKey("conversations.id"), nullable=False)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"))
     sender = Column(String, nullable=False)  # 'user' or 'assistant'
     content = Column(Text, nullable=False)
     

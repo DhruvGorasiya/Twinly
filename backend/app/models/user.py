@@ -15,5 +15,15 @@ class User(BaseModel):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Use string reference for the relationship
-    conversations = relationship("Conversation", back_populates="user", lazy="dynamic")
-    integrations = relationship("Integration", back_populates="user", lazy="dynamic") 
+    conversations = relationship(
+        "Conversation",
+        back_populates="user",
+        lazy="dynamic",
+        cascade="all, delete-orphan"
+    )
+    integrations = relationship(
+        "Integration",
+        back_populates="user",
+        lazy="dynamic",
+        cascade="all, delete-orphan"
+    )

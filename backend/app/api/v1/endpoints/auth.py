@@ -8,8 +8,6 @@ from app.services.user_service import UserService
 from app.schemas.auth import Token
 from app.schemas.user import UserData
 from pydantic import BaseModel
-from sqlalchemy import Column, UUID, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 
 
 router = APIRouter()

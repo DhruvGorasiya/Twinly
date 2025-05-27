@@ -27,7 +27,7 @@ class Integration(BaseModel):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     
     # User relationship
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"))
     user = relationship("User", back_populates="integrations")
     
     # Service identification
