@@ -20,30 +20,19 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# Set up CORS middleware with more specific configuration
 app.add_middleware(
     CORSMiddleware,
-        allow_origins=[
-        "http://localhost:3000",     # Local development
-        "https://twinly.net",        # Production frontend
-        "http://twinly.net"          # Fallback for http
-    ],  # Using the origins from settings
+    allow_origins=[
+        "http://localhost:3000",
+        "https://twinly.net",
+        "http://twinly.net"
+    ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"]
 )
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["http://localhost:3000"],  # Explicitly allow localhost
-#     allow_credentials=True,
-#     allow_methods=["*"],  # Allow all methods
-#     allow_headers=["*"],  # Allow all headers
-#     expose_headers=["*"]
-# )
-
-# Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
@@ -52,7 +41,6 @@ async def root():
 
 def start_cloud_sql_proxy():
     try:
-        # Check if port 5432 is already in use
         subprocess.check_output(["lsof", "-i", ":5432"])
         print("Cloud SQL Proxy already running on port 5432.")
     except subprocess.CalledProcessError:
@@ -65,12 +53,8 @@ def start_cloud_sql_proxy():
         ])
         time.sleep(1)
 
-@app.on_event("startup")
-async def startup_event():
-    if os.getenv("USE_CLOUD_SQL_SOCKET") != "true":
-        start_cloud_sql_proxy()
-
 if __name__ == "__main__":
+    if os.getenv("ENV") == "local":
+        start_cloud_sql_proxy()
     import uvicorn
-    port = int(os.getenv("PORT", "8000"))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True) 
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
