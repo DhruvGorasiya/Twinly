@@ -8,6 +8,7 @@ from typing import Dict, Any
 import hmac
 import hashlib
 from app.core.config import settings
+from svix.webhooks import Webhook
 
 router = APIRouter()
 
@@ -16,18 +17,21 @@ async def clerk_webhook(request: Request, db: Session = Depends(get_db)):
     try:
         # Get the webhook payload
         payload = await request.json()
-        
-        # Verify the webhook signature (you should implement this)
+        logging.info(f"Received webhook payload: {payload}")  # Log the payload
+        # Verify the webhook signature
         await verify_webhook_signature(request)
         
         # Get the event type
         event_type = payload.get("type")
+        logging.info(f"Processing event type: {event_type}")  # Log the event type
         
         if event_type == "user.deleted":
             # Get the user ID from the payload
             user_id = payload.get("data", {}).get("id")
+            logging.info(f"Attempting to delete user with ID: {user_id}")  # Log the user ID
             
             if not user_id:
+                logging.error("No user ID provided in webhook payload")  # Log error
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="No user ID provided in webhook payload"
@@ -38,14 +42,25 @@ async def clerk_webhook(request: Request, db: Session = Depends(get_db)):
             user = user_repository.get_by_id(user_id)
             
             if user:
-                user_repository.delete(user.id)
-                logging.info(f"User {user_id} deleted from database")
-                return {"status": "success", "message": "User deleted successfully"}
+                logging.info(f"Found user {user_id}, attempting to delete")  # Log found user
+                try:
+                    user_repository.delete(user.id)
+                    db.commit()  # Make sure to commit the transaction
+                    logging.info(f"Successfully deleted user {user_id}")
+                    return {"status": "success", "message": "User deleted successfully"}
+                except Exception as delete_error:
+                    db.rollback()  # Rollback on error
+                    logging.error(f"Error deleting user {user_id}: {str(delete_error)}")
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail=f"Error deleting user: {str(delete_error)}"
+                    )
             else:
                 logging.warning(f"User {user_id} not found in database")
                 return {"status": "success", "message": "User not found in database"}
         
         # Handle other webhook events if needed
+        logging.info(f"Processed event {event_type}")
         return {"status": "success", "message": f"Event {event_type} processed"}
         
     except Exception as e:
@@ -56,51 +71,11 @@ async def clerk_webhook(request: Request, db: Session = Depends(get_db)):
         )
 
 async def verify_webhook_signature(request: Request):
-    """
-    Verify the webhook signature from Clerk
-    """
+    body = await request.body()
+    headers = request.headers
+
     try:
-        # Get the signature from the header
-        signature = request.headers.get("svix-signature")
-        if not signature:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="No signature provided"
-            )
-        
-        # Get the timestamp from the header
-        timestamp = request.headers.get("svix-timestamp")
-        if not timestamp:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="No timestamp provided"
-            )
-        
-        # Get the webhook secret from your environment variables
-        webhook_secret = settings.CLERK_WEBHOOK_SECRET
-        
-        # Get the raw body
-        body = await request.body()
-        
-        # Create the signature string
-        signature_string = f"{timestamp}.{body.decode()}"
-        
-        # Create the expected signature
-        expected_signature = hmac.new(
-            webhook_secret.encode(),
-            signature_string.encode(),
-            hashlib.sha256
-        ).hexdigest()
-        
-        # Compare signatures
-        if not hmac.compare_digest(signature, expected_signature):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid signature"
-            )
-            
+        wh = Webhook(settings.CLERK_WEBHOOK_SECRET)
+        wh.verify(body, headers)  # Raises exception if invalid
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=401, detail="Invalid webhook signature")

@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     CLERK_JWKS_URL: str | None = None
     CLERK_CLIENT_ID: str | None = None  # Your Clerk application ID
     CLERK_ISSUER: str | None = None     # Your Clerk instance (e.g., "your-app.clerk.accounts.dev")
+    CLERK_WEBHOOK_SECRET: str | None = os.getenv("CLERK_WEBHOOK_SECRET")
     
     # Google OAuth Configuration
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID")

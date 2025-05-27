@@ -8,6 +8,8 @@ from app.services.user_service import UserService
 from app.schemas.auth import Token
 from app.schemas.user import UserData
 from pydantic import BaseModel
+from sqlalchemy import Column, UUID, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 
 
 router = APIRouter()
@@ -57,8 +59,8 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
         user_service = UserService(user_repository)
         
         # Check if user already exists
-        # existing_user = user_repository.get_by_email(user_data.email)
-        existing_user = user_repository.get_by_id(user_data.id)
+        existing_user = user_repository.get_by_email(user_data.email)
+        # existing_user = user_repository.get_by_id(user_data.id)
         
         if not existing_user:
             user_service.create_user(user_data)
