@@ -31,8 +31,8 @@ class Settings(BaseSettings):
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         if os.getenv("USE_CLOUD_SQL_SOCKET") == "true":
-            # Use Unix socket for Cloud SQL
-            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@/{self.POSTGRES_DB}?host={self.POSTGRES_SERVER}"
+            # Use Unix socket for Cloud SQL with full path
+            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@/{self.POSTGRES_DB}?host=/cloudsql/{self.POSTGRES_SERVER}"
         else:
             # Use TCP for local development
             return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
@@ -55,7 +55,11 @@ class Settings(BaseSettings):
     GOOGLE_AUTH_URI: str = os.getenv("GOOGLE_AUTH_URI", "https://accounts.google.com/o/oauth2/auth")
     GOOGLE_TOKEN_URI: str = os.getenv("GOOGLE_TOKEN_URI", "https://oauth2.googleapis.com/token")
     GOOGLE_AUTH_PROVIDER_CERT_URL: str = os.getenv("GOOGLE_AUTH_PROVIDER_CERT_URL", "https://www.googleapis.com/oauth2/v1/certs")
-    GOOGLE_REDIRECT_URI: str = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:3000/oauth/callback")
+    GOOGLE_REDIRECT_URI: str = (
+        "https://twinly.net/oauth/callback"
+        if os.getenv("USE_CLOUD_SQL_SOCKET") == "true"
+        else "http://localhost:3000/oauth/callback"
+    )
     
     FRONTEND_URL: str = "http://localhost:3000"
     
