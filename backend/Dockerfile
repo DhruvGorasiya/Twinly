@@ -11,7 +11,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
-    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies into wheels
@@ -22,7 +21,6 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /wheels -r requirements.txt
 FROM python:3.11-slim
 
 WORKDIR /app
-
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -35,8 +33,8 @@ RUN pip install --no-cache /wheels/*
 # Copy application code
 COPY . .
 
-# Create directory for Cloud SQL Unix socket
-RUN mkdir -p /cloudsql
+# Make start script executable
+RUN chmod +x start.sh
 
 # Expose the port Cloud Run expects
 EXPOSE 8080
