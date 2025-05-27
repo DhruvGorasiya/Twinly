@@ -12,9 +12,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install system dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        gcc \
-        python3-dev \
-        wget \
+    gcc \
+    python3-dev \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -55,14 +55,5 @@ RUN mkdir -p /cloudsql
 # Expose port
 EXPOSE 8080
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-if [ "$ENVIRONMENT" = "production" ]; then\n\
-    cloud_sql_proxy -instances=$INSTANCE_CONNECTION_NAME=tcp:5432 &\n\
-    sleep 5\n\
-fi\n\
-uvicorn main:app --host 0.0.0.0 --port 8080\n\
-' > /app/start.sh && chmod +x /app/start.sh
-
 # Command to run the application
-CMD ["/app/start.sh"] 
+CMD ["./start.sh"]
