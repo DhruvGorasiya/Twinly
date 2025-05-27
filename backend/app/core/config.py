@@ -1,79 +1,83 @@
 from typing import List, Optional
 from pydantic_settings import BaseSettings
-from pydantic import AnyHttpUrl
-import os
+from pydantic import AnyHttpUrl, Field
+
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FastAPI Backend"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
-    
-    # CORS Configuration
+
+    # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost:3000",  # Local development
-        "https://twinly.net",     # Production frontend
-        "http://twinly.net"       # Fallback for http
+        "http://localhost:3000",
+        "https://twinly.net",
+        "http://twinly.net",
     ]
-    
-    # Database Configuration
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "twinly_db")
-    POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
-    
-    # Determine POSTGRES_SERVER based on USE_CLOUD_SQL_SOCKET
-    POSTGRES_SERVER: str = (
-        "/cloudsql/twinly-459118:us-central1:twinly"
-        if os.getenv("USE_CLOUD_SQL_SOCKET") == "true"
-        else "127.0.0.1"
-    )
-    
+
+    # DB Fields
+    POSTGRES_USER: str = Field(default="postgres", env="POSTGRES_USER")
+    POSTGRES_PASSWORD: str = Field(default="postgres", env="POSTGRES_PASSWORD")
+    POSTGRES_DB: str = Field(default="twinly_db", env="POSTGRES_DB")
+    POSTGRES_PORT: str = Field(default="5432", env="POSTGRES_PORT")
+    USE_CLOUD_SQL_SOCKET: bool = Field(default=False, env="USE_CLOUD_SQL_SOCKET")
+
+    @property
+    def POSTGRES_SERVER(self) -> str:
+        return (
+            "/cloudsql/twinly-459118:us-central1:twinly"
+            if self.USE_CLOUD_SQL_SOCKET
+            else "127.0.0.1"
+        )
+
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        if os.getenv("USE_CLOUD_SQL_SOCKET") == "true":
-            # Use Unix socket for Cloud SQL with full path
-            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@/{self.POSTGRES_DB}?host={self.POSTGRES_SERVER}"
-        else:
-            # Use TCP for local development
-            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-    
-    # JWT Configuration
-    SECRET_KEY: str = "your-secret-key-here"  # Change this in production
+        if self.USE_CLOUD_SQL_SOCKET:
+            return (
+                f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+                f"@/{self.POSTGRES_DB}?host={self.POSTGRES_SERVER}"
+            )
+        return (
+            f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+            f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        )
+
+    # JWT
+    SECRET_KEY: str = "your-secret-key-here"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
-    # OpenAI Configuration
+
+    # OpenAI
     OPENAI_API_KEY: str
-    
-    CLERK_JWKS_URL: str | None = None
-    CLERK_CLIENT_ID: str | None = None  # Your Clerk application ID
-    CLERK_ISSUER: str | None = None     # Your Clerk instance (e.g., "your-app.clerk.accounts.dev")
-    CLERK_WEBHOOK_SECRET: str | None = os.getenv("CLERK_WEBHOOK_SECRET")
-    
-    # Google OAuth Configuration
-    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID")
-    GOOGLE_CLIENT_SECRET: str = os.getenv("GOOGLE_CLIENT_SECRET")
-    GOOGLE_AUTH_URI: str = os.getenv("GOOGLE_AUTH_URI", "https://accounts.google.com/o/oauth2/auth")
-    GOOGLE_TOKEN_URI: str = os.getenv("GOOGLE_TOKEN_URI", "https://oauth2.googleapis.com/token")
-    GOOGLE_AUTH_PROVIDER_CERT_URL: str = os.getenv("GOOGLE_AUTH_PROVIDER_CERT_URL", "https://www.googleapis.com/oauth2/v1/certs")
-    GOOGLE_REDIRECT_URI: str = (
-        "https://twinly.net/oauth/callback"
-        if os.getenv("USE_CLOUD_SQL_SOCKET") == "true"
-        else "http://localhost:3000/oauth/callback"
-    )
-    
+
+    # Clerk
+    CLERK_JWKS_URL: Optional[str] = None
+    CLERK_CLIENT_ID: Optional[str] = None
+    CLERK_ISSUER: Optional[str] = None
+    CLERK_WEBHOOK_SECRET: Optional[str] = Field(default=None, env="CLERK_WEBHOOK_SECRET")
+
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = Field(..., env="GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET: str = Field(..., env="GOOGLE_CLIENT_SECRET")
+    GOOGLE_AUTH_URI: str = Field(default="https://accounts.google.com/o/oauth2/auth", env="GOOGLE_AUTH_URI")
+    GOOGLE_TOKEN_URI: str = Field(default="https://oauth2.googleapis.com/token", env="GOOGLE_TOKEN_URI")
+    GOOGLE_AUTH_PROVIDER_CERT_URL: str = Field(default="https://www.googleapis.com/oauth2/v1/certs", env="GOOGLE_AUTH_PROVIDER_CERT_URL")
+
+    @property
+    def GOOGLE_REDIRECT_URI(self) -> str:
+        return (
+            "https://twinly.net/oauth/callback"
+            if self.USE_CLOUD_SQL_SOCKET
+            else "http://localhost:3000/oauth/callback"
+        )
+
     FRONTEND_URL: str = "http://localhost:3000"
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # Override CORS origins if environment variable is set
-        if os.getenv("CORS_ORIGINS"):
-            self.BACKEND_CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS").split(",")]
-    
+
     class Config:
         case_sensitive = True
         env_file = ".env"
         env_file_encoding = "utf-8"
         extra = "allow"
 
-settings = Settings() 
+
+settings = Settings()

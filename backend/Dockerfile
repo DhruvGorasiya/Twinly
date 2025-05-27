@@ -1,59 +1,43 @@
-# Use Python 3.11 slim as the base image
+# Base image for building wheels
 FROM python:3.11-slim as builder
 
-# Set working directory
 WORKDIR /app
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+# Install build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
-    wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install Python dependencies into wheels
 COPY requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /wheels -r requirements.txt
 
-# Final stage
+# Final image
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PATH="/app/venv/bin:$PATH"
+    PYTHONUNBUFFERED=1
 
-# Create and activate virtual environment
-RUN python -m venv /app/venv
-
-# Install Cloud SQL proxy
-RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /usr/local/bin/cloud_sql_proxy \
-    && chmod +x /usr/local/bin/cloud_sql_proxy
-
-# Copy wheels from builder
-COPY --from=builder /app/wheels /wheels
+# Install dependencies from wheels
+COPY --from=builder /wheels /wheels
 COPY --from=builder /app/requirements.txt .
-
-# Install dependencies
 RUN pip install --no-cache /wheels/*
 
 # Copy application code
 COPY . .
 
-# Create directory for Cloud SQL socket
+# Create directory for Cloud SQL Unix socket
 RUN mkdir -p /cloudsql
 
-# Expose port
+# Expose the port Cloud Run expects
 EXPOSE 8080
 
-# Command to run the application
+# Run the application
 CMD ["./start.sh"]
