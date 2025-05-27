@@ -95,5 +95,6 @@ cd frontend && npm install && npm run dev
 cd backend && poetry install && uvicorn app.main:app --reload
 ```
 
-Created with ❤️ by @dhruvgorasiya.
+Created with ❤️ by @DhruvGorasiya.
+
 For access, collaboration, or feedback — open an issue or reach out directly.
