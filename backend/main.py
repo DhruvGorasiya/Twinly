@@ -65,7 +65,12 @@ def start_cloud_sql_proxy():
         ])
         time.sleep(1)
 
+@app.on_event("startup")
+async def startup_event():
+    if os.getenv("USE_CLOUD_SQL_SOCKET") != "true":
+        start_cloud_sql_proxy()
+
 if __name__ == "__main__":
-    start_cloud_sql_proxy()
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True) 
