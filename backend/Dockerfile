@@ -1,54 +1,26 @@
-# Use Python 3.11 slim as the base image
-FROM python:3.11-slim as builder
-
-# Set working directory
-WORKDIR /app
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
-
-ENV IN_DOCKER=true
-
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        python3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
-
-# Final stage
+# Base image
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Set environment variables
+# Environment settings
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/app/venv/bin:$PATH"
+    ENV=production
 
-ENV ENV=production
-# Create and activate virtual environment
-RUN python -m venv /app/venv
-
-# Copy wheels from builder
-COPY --from=builder /app/wheels /wheels
-COPY --from=builder /app/requirements.txt .
+# System dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-RUN pip install --no-cache /wheels/*
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy app
 COPY . .
 
-# Expose port
+# Expose port for Cloud Run
 EXPOSE 8080
 
-# Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"] 
+# Start the app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
