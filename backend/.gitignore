@@ -35,3 +35,7 @@ ENV/
 .vscode/
 *.swp
 *.swo 
+
+start.sh
+client_secret_google_oauth.json
+twinly-459118-56c3cc7493e1.json
