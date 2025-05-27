@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     GOOGLE_TOKEN_URI: str = os.getenv("GOOGLE_TOKEN_URI", "https://oauth2.googleapis.com/token")
     GOOGLE_AUTH_PROVIDER_CERT_URL: str = os.getenv("GOOGLE_AUTH_PROVIDER_CERT_URL", "https://www.googleapis.com/oauth2/v1/certs")
     GOOGLE_REDIRECT_URI: str = (
-        "https://twinly.net/oauth/callback"
+        "https://twinly-backend-357648867200.us-east4.run.app"
         if os.getenv("USE_CLOUD_SQL_SOCKET") == "true"
         else "http://localhost:3000/oauth/callback"
     )
