@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         if os.getenv("USE_CLOUD_SQL_SOCKET") == "true":
             # Use Unix socket for Cloud SQL with full path
-            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@/{self.POSTGRES_DB}?host=/cloudsql/{self.POSTGRES_SERVER}"
+            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@/{self.POSTGRES_DB}?host={self.POSTGRES_SERVER}"
         else:
             # Use TCP for local development
             return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
