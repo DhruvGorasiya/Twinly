@@ -16,15 +16,26 @@ class Settings(BaseSettings):
     ]
     
     # Database Configuration
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER", "localhost")
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "twinly_db")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
     
+    # Determine POSTGRES_SERVER based on USE_CLOUD_SQL_SOCKET
+    POSTGRES_SERVER: str = (
+        "/cloudsql/twinly-459118:us-central1:twinly"
+        if os.getenv("USE_CLOUD_SQL_SOCKET") == "true"
+        else "127.0.0.1"
+    )
+    
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        if os.getenv("USE_CLOUD_SQL_SOCKET") == "true":
+            # Use Unix socket for Cloud SQL
+            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@/{self.POSTGRES_DB}?host={self.POSTGRES_SERVER}"
+        else:
+            # Use TCP for local development
+            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
     
     # JWT Configuration
     SECRET_KEY: str = "your-secret-key-here"  # Change this in production
