@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const DashboardPage = () => {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hi! I'm your AI assistant. How can I help you today?",
+      content: "Hey I am Twinly, your AI assistant. How can I help you today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -14,6 +14,16 @@ const DashboardPage = () => {
 
   const BACKEND_URL =
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +62,7 @@ const DashboardPage = () => {
         throw new Error("No reader available");
       }
 
-      let accumulatedContent = ""; // Track accumulated content
+      let accumulatedContent = "";
 
       while (true) {
         const { value, done } = await reader.read();
@@ -65,12 +75,11 @@ const DashboardPage = () => {
           if (line.trim()) {
             try {
               const data = JSON.parse(line);
-              accumulatedContent += data.content; // Accumulate the content
-              // Update the last message with the accumulated content
+              accumulatedContent += data.content;
               setMessages((prev) => {
                 const newMessages = [...prev];
                 const lastMessage = newMessages[newMessages.length - 1];
-                lastMessage.content = accumulatedContent; // Use accumulated content
+                lastMessage.content = accumulatedContent;
                 return newMessages;
               });
             } catch (e) {
@@ -81,7 +90,6 @@ const DashboardPage = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      // Add error message to the chat
       setMessages((prev) => [
         ...prev,
         {
@@ -114,7 +122,37 @@ const DashboardPage = () => {
                       : "bg-zinc-800 text-gray-100"
                   }`}
                 >
-                  {msg.content}
+                  {msg.role === "user" ? (
+                    msg.content
+                  ) : (
+                    <div
+                      className="prose prose-invert max-w-none
+                        prose-headings:text-white 
+                        prose-h1:text-2xl prose-h1:font-bold prose-h1:mb-4
+                        prose-h2:text-xl prose-h2:font-semibold prose-h2:mb-3
+                        prose-p:text-gray-300 prose-p:mb-4
+                        prose-ul:text-gray-300 prose-ul:list-disc prose-ul:pl-4
+                        prose-li:text-gray-300 prose-li:mb-2
+                        prose-strong:text-white prose-strong:font-bold
+                        prose-em:text-gray-300 prose-em:italic
+                        prose-blockquote:text-gray-400 prose-blockquote:border-l-4 prose-blockquote:border-gray-600 prose-blockquote:pl-4 prose-blockquote:italic
+                        prose-hr:border-gray-700 prose-hr:my-4
+                        prose-pre:bg-zinc-900 prose-pre:p-4 prose-pre:rounded-lg
+                        prose-code:text-gray-300
+                        [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4
+                        [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mb-3
+                        [&>p]:text-gray-300 [&>p]:mb-4
+                        [&>ul]:text-gray-300 [&>ul]:list-disc [&>ul]:pl-4
+                        [&>li]:text-gray-300 [&>li]:mb-2
+                        [&>strong]:text-white [&>strong]:font-bold
+                        [&>em]:text-gray-300 [&>em]:italic
+                        [&>blockquote]:text-gray-400 [&>blockquote]:border-l-4 [&>blockquote]:border-gray-600 [&>blockquote]:pl-4 [&>blockquote]:italic
+                        [&>hr]:border-gray-700 [&>hr]:my-4
+                        [&>pre]:bg-zinc-900 [&>pre]:p-4 [&>pre]:rounded-lg
+                        [&>code]:text-gray-300"
+                      dangerouslySetInnerHTML={{ __html: msg.content }}
+                    />
+                  )}
                   {isLoading &&
                     idx === messages.length - 1 &&
                     msg.role === "assistant" && (
@@ -123,6 +161,7 @@ const DashboardPage = () => {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
 

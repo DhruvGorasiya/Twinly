@@ -1,4 +1,6 @@
-module.exports = {
+import typography from '@tailwindcss/typography';
+
+const config = {
     theme: {
         extend: {
             animation: {
@@ -25,6 +27,40 @@ module.exports = {
                     '100%': { backgroundPosition: '200% center' },
                 },
             },
+            typography: {
+                DEFAULT: {
+                    css: {
+                        'h1, h2, h3, h4': {
+                            color: 'white',
+                            marginTop: '1.5em',
+                            marginBottom: '0.5em',
+                        },
+                        'ul, ol': {
+                            marginTop: '1em',
+                            marginBottom: '1em',
+                        },
+                        'li': {
+                            marginTop: '0.5em',
+                            marginBottom: '0.5em',
+                        },
+                        'p': {
+                            marginTop: '1em',
+                            marginBottom: '1em',
+                        },
+                        'strong': {
+                            color: 'white',
+                        },
+                        'em': {
+                            color: '#d1d5db',
+                        },
+                    },
+                },
+            },
         },
     },
+    plugins: [
+        typography,
+    ],
 };
+
+export default config;
