@@ -11,6 +11,7 @@ const DashboardPage = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
 
   const BACKEND_URL =
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
@@ -32,7 +33,7 @@ const DashboardPage = () => {
     // Add user message to the chat
     setMessages([...messages, { role: "user", content: input }]);
     setInput("");
-    setIsLoading(true);
+    setIsWaitingForResponse(true);
 
     try {
       // Make API call to backend
@@ -54,6 +55,8 @@ const DashboardPage = () => {
 
       // Add an empty assistant message that we'll update with streaming content
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+      setIsWaitingForResponse(false);
+      setIsLoading(true);
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -99,6 +102,7 @@ const DashboardPage = () => {
       ]);
     } finally {
       setIsLoading(false);
+      setIsWaitingForResponse(false);
     }
   };
 
@@ -161,6 +165,18 @@ const DashboardPage = () => {
                 </div>
               </div>
             ))}
+            {/* Show loading animation while waiting for initial response */}
+            {isWaitingForResponse && (
+              <div className="flex justify-start">
+                <div className="px-4 py-2 rounded-lg max-w-[70%] text-base bg-zinc-800 text-gray-100">
+                  <div className="flex space-x-2 items-center">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         </div>

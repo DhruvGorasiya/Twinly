@@ -4,7 +4,6 @@
 if ! pgrep -x "cloud-sql-proxy" > /dev/null; then
     echo "Starting Cloud SQL proxy..."
     cloud-sql-proxy twinly-459118:us-central1:twinly \
-        --credentials-file=./keys/cloudsql-proxy.json \
         --port=5432 &
     sleep 5
 else
