@@ -70,33 +70,57 @@ export default function IntegrationsPage() {
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
   useEffect(() => {
-    async function checkGmailStatus() {
+    async function checkIntegrationStatus() {
       if (!user?.id) return;
       
       try {
-        const response = await fetch(
-          `${BACKEND_URL}/api/v1/integrations/gmail/status?user_id=${user.id}`
+        // Check Gmail status
+        const gmailResponse = await fetch(
+          `${BACKEND_URL}/api/v1/integrations/gmail/status`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: user.id })
+          }
         );
-        const data = await response.json();
-
-        console.log("data", data);
+        const gmailData = await gmailResponse.json();
         
-        if (data.status === "connected") {
-          console.log("setting connectedIntegrations");
+        if (gmailData.status === "connected") {
           setConnectedIntegrations(prev => 
             prev.includes("Gmail") ? prev : [...prev, "Gmail"]
           );
         }
+
+        // Check Notion status
+        const notionResponse = await fetch(
+          `${BACKEND_URL}/api/v1/integrations/notion/status`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: user.id })
+          }
+        );
+        const notionData = await notionResponse.json();
+        
+        if (notionData.status === "connected") {
+          setConnectedIntegrations(prev => 
+            prev.includes("Notion") ? prev : [...prev, "Notion"]
+          );
+        }
       } catch (error) {
-        console.error("Error checking Gmail status:", error);
+        console.error("Error checking integration status:", error);
       }
     }
 
-
-    checkGmailStatus();
+    checkIntegrationStatus();
   }, [BACKEND_URL, user?.id]);
 
   const handleToggle = async (integrationName: string) => {
+    console.log("integrationName", integrationName);
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -109,21 +133,65 @@ export default function IntegrationsPage() {
     if (integrationName === "Gmail") {
       if (connectedIntegrations.includes("Gmail")) {
         try {
-          await fetch(`${BACKEND_URL}/api/v1/integrations/gmail/disconnect?user_id=${user.id}`, {
+          await fetch(`${BACKEND_URL}/api/v1/integrations/gmail/disconnect`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ user_id: user.id })
           });
           setConnectedIntegrations(prev => prev.filter(name => name !== "Gmail"));
         } catch (error) {
           console.error("Error disconnecting Gmail:", error);
         }
       } else {
-        window.location.href = `${BACKEND_URL}/api/v1/integrations/gmail/auth?user_id=${user.id}`;
+        const response = await fetch(`${BACKEND_URL}/api/v1/integrations/gmail/auth`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ user_id: user.id })
+        });
+        const data = await response.json();
+        if (data.auth_url) {
+          window.location.href = data.auth_url;
+        }
       }
       return;
     }
+
+    if (integrationName === "Notion") {
+      console.log("notion", connectedIntegrations);
+      if (connectedIntegrations.includes("Notion")) {
+        try {
+          await fetch(`${BACKEND_URL}/api/v1/integrations/notion/disconnect`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: user.id })
+          });
+          setConnectedIntegrations(prev => prev.filter(name => name !== "Notion"));
+        } catch (error) {
+          console.error("Error disconnecting Notion:", error);
+        }
+      } else {
+        console.log("notion auth");
+        const response = await fetch(`${BACKEND_URL}/api/v1/integrations/notion/auth`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ user_id: user.id })
+        });
+        const data = await response.json();
+        if (data.auth_url) {
+          window.location.href = data.auth_url;
+        }
+      }
+      return;
+    }
+
     setConnecting(integrationName);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setConnectedIntegrations(prev => 

@@ -63,12 +63,33 @@ class Settings(BaseSettings):
     GOOGLE_TOKEN_URI: str = Field(default="https://oauth2.googleapis.com/token", env="GOOGLE_TOKEN_URI")
     GOOGLE_AUTH_PROVIDER_CERT_URL: str = Field(default="https://www.googleapis.com/oauth2/v1/certs", env="GOOGLE_AUTH_PROVIDER_CERT_URL")
 
+    NOTION_CLIENT_ID: str = Field(..., env="NOTION_CLIENT_ID")
+    NOTION_AUTH_URL: str = Field(..., env="NOTION_AUTH_URL")
+    NOTION_CLIENT_SECRET: str = Field(..., env="NOTION_CLIENT_SECRET")
+    NOTION_REDIRECT_URI: str = "http://localhost:3000/oauth/callback"
+
+    NOTION_SCOPES: List[str] = [
+        "read_user",
+        "read_blocks",
+        "read_databases",
+        "write_blocks",
+        "write_databases"
+    ]
+
     @property
     def GOOGLE_REDIRECT_URI(self) -> str:
         return (
             "https://twinly.net/oauth/callback"
             if self.USE_CLOUD_SQL_SOCKET
             else "http://localhost:3000/oauth/callback"
+        )
+        
+    @property
+    def NOTION_REDIRECT_URI(self) -> str:
+        return (
+            "https://twinly.net/oauth/notion/callback"
+            if self.USE_CLOUD_SQL_SOCKET
+            else "http://localhost:3000/oauth/notion/callback"
         )
 
     FRONTEND_URL: str = "http://localhost:3000"
