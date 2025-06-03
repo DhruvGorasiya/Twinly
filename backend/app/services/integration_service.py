@@ -22,7 +22,7 @@ class IntegrationService:
         db_integration = self.repository.create(integration.dict())
         return IntegrationResponse.model_validate(db_integration)
 
-    def get_integration(self, user_id: str, service_type: ServiceType) -> Optional[IntegrationResponse]:
+    def get_integration(self, user_id: str, service_type: str) -> Optional[IntegrationResponse]:
         integration = self.repository.get_by_user_and_service(user_id, service_type)
         if not integration:
             return None

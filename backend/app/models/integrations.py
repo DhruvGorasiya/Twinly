@@ -12,13 +12,13 @@ class IntegrationStatus(enum.Enum):
     expired = "expired"
 
 class ServiceType(enum.Enum):
-    GMAIL = "gmail"
-    SLACK = "slack"
-    OUTLOOK = "outlook"
-    GOOGLE_CALENDAR = "google_calendar"
-    GOOGLE_SHEETS = "google_sheets"
-    TEAMS = "teams"
-    NOTION = "notion"
+    GMAIL = "GMAIL"
+    SLACK = "SLACK"
+    OUTLOOK = "OUTLOOK"
+    GOOGLE_CALENDAR = "GOOGLE_CALENDAR"
+    GOOGLE_SHEETS = "GOOGLE_SHEETS"
+    TEAMS = "TEAMS"
+    NOTION = "NOTION"
 
 class Integration(BaseModel):
     __tablename__ = "integrations"

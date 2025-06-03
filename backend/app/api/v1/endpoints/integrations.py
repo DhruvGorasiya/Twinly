@@ -426,8 +426,9 @@ async def notion_status(request: UserIdRequest, db: Session = Depends(get_db)):
     """
     try:
         integration_service = IntegrationService(db)
-        integration = integration_service.get_integration(request.user_id, ServiceType.NOTION)
+        integration = integration_service.get_integration(request.user_id, ServiceType.NOTION.value)
         print("integration", integration)
+        print("user_id", request.user_id)
         if not integration:
             return {
                 "status": "not_connected",

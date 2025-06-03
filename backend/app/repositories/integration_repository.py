@@ -17,8 +17,7 @@ class IntegrationRepository:
     def get_by_id(self, integration_id: str) -> Optional[Integration]:
         return self.db.query(Integration).filter(Integration.id == integration_id).first()
 
-    def get_by_user_and_service(self, user_id: str, service_type: ServiceType) -> Optional[Integration]:
-
+    def get_by_user_and_service(self, user_id: str, service_type: str) -> Optional[Integration]:
         return self.db.query(Integration).filter(
             Integration.user_id == user_id,
             Integration.service_type == service_type,
